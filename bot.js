@@ -19,48 +19,48 @@ require("dotenv").config();
 
 let storage = null;
 if (process.env.MONGO_URI) {
-  storage = mongoStorage = new MongoDbStorage({
-    url: process.env.MONGO_URI,
-  });
+    storage = mongoStorage = new MongoDbStorage({
+        url: process.env.MONGO_URI,
+    });
 }
 
 const adapter = new WebAdapter({});
 
 const controller = new Botkit({
-  webhook_uri: "/api/messages",
+    webhook_uri: "/api/messages",
 
-  adapter: adapter,
+    adapter: adapter,
 
-  storage,
+    storage,
 });
 
 // controller.middleware.receive.use(rasa.receive);
 
 if (process.env.CMS_URI) {
-  controller.usePlugin(
-    new BotkitCMSHelper({
-      uri: process.env.CMS_URI,
-      token: process.env.CMS_TOKEN,
-    })
-  );
+    controller.usePlugin(
+        new BotkitCMSHelper({
+            uri: process.env.CMS_URI,
+            token: process.env.CMS_TOKEN,
+        })
+    );
 }
 
 // Once the bot has booted up its internal services, you can use them to do stuff.
 controller.ready(() => {
-  // load traditional developer-created local custom feature modules
-  controller.loadModules(__dirname + "/features");
+    // load traditional developer-created local custom feature modules
+    controller.loadModules(__dirname + "/features");
 
-  /* catch-all that uses the CMS to trigger dialogs */
-  if (controller.plugins.cms) {
-    controller.on("message,direct_message", async (bot, message) => {
-      let results = false;
-      console.log(message);
-      results = await controller.plugins.cms.testTrigger(bot, message);
+    /* catch-all that uses the CMS to trigger dialogs */
+    if (controller.plugins.cms) {
+        controller.on("message,direct_message", async (bot, message) => {
+            let results = false;
+            console.log(message);
+            results = await controller.plugins.cms.testTrigger(bot, message);
 
-      if (results !== false) {
-        // do not continue middleware!
-        return false;
-      }
-    });
-  }
+            if (results !== false) {
+                // do not continue middleware!
+                return false;
+            }
+        });
+    }
 });

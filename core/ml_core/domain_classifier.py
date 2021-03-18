@@ -1,34 +1,32 @@
-from pickle import load
+from core.ml_core.abstract_classifier import AbstractClassifier
+import joblib
 
-class DomainClassifier:
-    __instance = None
+
+class DomainClassifier(AbstractClassifier):
     __path = ""
-    __clf = None
+    __cls = None
 
-    def predict(self, msg):
-        return DomainClassifier.__path + msg
+    def classify(self, msg):
+        return self.__cls.predict_proba([msg])[0][1]
 
-    def __new__(cls):
-        if cls.__instance is None:
-            print("Creating new instance")
-            cls.__instance = super(DomainClassifier, cls).__new__(cls)
-        return cls.__instance
+    def __init__(self, path: str):
+        self.__path = path
+        self.initialize()
 
-    @classmethod
-    def instance(cls):
-        if cls.__instance is None:
-            cls.__instance = super(DomainClassifier, cls).__new__(cls)
-        return cls.__instance
+    def initialize(self):
+        self.__cls = joblib.load(self.__path)
 
-    @staticmethod
-    def set_path(path):
-        DomainClassifier.__path = path
-        try:
-            DomainClassifier.__clf = load(open(path, 'rb'))
-        except:
-            print("load pickle error")
+
+class NhaKhoaClassifier(DomainClassifier):
+    def __init__(self):
+        super().__init__("../models/svm_nhakhoa.joblib")
+
+
+class BanHangClassifier(DomainClassifier):
+    def __init__(self):
+        super().__init__("../models/svm_banhang.joblib")
+
 
 if __name__ == "__main__":
-    DomainClassifier.set_path("/adb/asdf/")
-    a = DomainClassifier.instance()
-    print(a.predict("ABCSASD"))
+    cls = NhaKhoaClassifier()
+    print(cls.classify("Hello"))

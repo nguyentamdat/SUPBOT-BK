@@ -1,20 +1,25 @@
+from core.chatbot_service import ChatbotService
 import math
 import random
-from flask import Flask, jsonify
-from ml_core.domain_classifier import DomainClassifier
+from flask import Flask, jsonify, request
 app = Flask(__name__)
 
-@app.route('/')
+service = ChatbotService.get_instance()
+
+
+@app.route('/domain', methods=["POST"])
 def hello():
-    return jsonify(body="Hello from multibot!")
+    req = request.json
+    res = service.receive(req['id'], req['text'])
+    return jsonify(body=res)
+
 
 @app.route('/whichbot', methods=["POST"])
 def choose_bot():
     return jsonify(body="hello", intent="bot"+str(round(random.random())))
 
-if __name__ == '__main__':
-    a = DomainClassifier.instance()
-    b = DomainClassifier.instance()
-    print(a is b)
-    print(a.predict("abc"))
-    app.run()
+@app.route('/image', methods=["POST"])
+def image():
+    req = request.json
+    result = service.receive_image(req['base64'])
+    return jsonify(body=result)

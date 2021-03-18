@@ -64,13 +64,17 @@ var Botkit = {
     },
     send: function (text, e) {
         var that = this;
-        if (e) e.preventDefault();
-        if (!text) {
-            return;
+        if (e) {
+            e.preventDefault();
         }
+
+        if (!text) {
+            return false;
+        }
+
         var message = {
             type: 'outgoing',
-            text: text
+            text: text,
         };
 
         this.clearReplies();
@@ -89,6 +93,35 @@ var Botkit = {
 
         return false;
     },
+    sendImage: function (image, e) {
+        var that = this;
+        if (e) {
+            e.preventDefault();
+        }
+
+        if (!image) {
+            return false;
+        }
+        
+        var message = {
+            type: 'outgoing',
+            image: image,
+        };
+
+        this.clearReplies();
+        that.renderMessage(message);
+
+        that.deliverMessage({
+            type: 'image',
+            image: image,
+            user: this.guid,
+            channel: this.options.use_sockets ? 'websocket' : 'webhook'
+        });
+
+        this.trigger('sent', message);
+
+        return false;
+    },
     deliverMessage: function (message) {
         if (this.options.use_sockets) {
             this.socket.send(JSON.stringify(message));
@@ -100,6 +133,7 @@ var Botkit = {
         var that = this;
         if (that.guid) {
             that.request('/botkit/history', {
+
                 user: that.guid
             }).then(function (history) {
                 if (history.success) {
@@ -247,6 +281,14 @@ var Botkit = {
             message.html = converter.makeHtml(message.text);
         }
 
+        if (message.image) {
+            message.html = converter.makeHtml(`![Alt image](${message.image})`);
+        }
+
+        if (!message.html) {
+            return;
+        }
+
         that.next_line.innerHTML = that.message_template({
             message: message
         });
@@ -293,6 +335,7 @@ var Botkit = {
                 break;
             case 'connect':
                 // link this account info to this user
+                console.log("CONNECT", event.data.user);
                 Botkit.connect(event.data.user);
                 break;
             default:
@@ -353,6 +396,8 @@ var Botkit = {
         that.replies = document.getElementById('message_replies');
 
         that.input = document.getElementById('messenger_input');
+        
+        that.image = document.getElementById('image-preview');
 
         that.focus();
 
