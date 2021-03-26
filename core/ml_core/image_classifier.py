@@ -1,4 +1,4 @@
-from core.ml_core.abstract_classifier import AbstractClassifier
+from ml_core.abstract_classifier import AbstractClassifier
 import torch
 from PIL import Image
 from torchvision import transforms
@@ -28,7 +28,7 @@ class ImageClassifier(AbstractClassifier):
         return categories
 
     def get_top5(self, probabilities):
-        with open('../models/image_classes.txt', 'r') as f:
+        with open('./models/image_classes.txt', 'r') as f:
             categories = [s.strip() for s in f.readlines()]
         top5_prob, top5_catid = torch.topk(probabilities, 5)
         result = []
@@ -39,7 +39,7 @@ class ImageClassifier(AbstractClassifier):
 
     def get_category(self, list_subcategory):
         cat_to_lab, lab_to_cat = get_categories(
-            "../models/imagenet_categories.csv")
+            "./models/imagenet_categories.csv")
         # all_cats = list(cat_to_lab.keys())
         categories = []
         for label, probs in list_subcategory:

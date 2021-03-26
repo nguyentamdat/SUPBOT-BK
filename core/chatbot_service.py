@@ -1,15 +1,15 @@
-from core.ml_core.domain_classifier import *
-from core.state_tracker import GeneralStateTracker
+from ml_core.domain_classifier import *
+from state_tracker import GeneralStateTracker
 import requests as req
 import json
-from core.ml_core.image_classifier import *
+from ml_core.image_classifier import *
 
 config_domain = ["NhaKhoaClassifier", "BanHangClassifier"]
 config = {
     "THRESHOLD": 0.90
 }
 # TMT_ENDPOINT = "http://103.113.81.36:3000/botkit/receive";
-TMT_ENDPOINT = "http://localhost:3001/botkit/receive";
+# TMT_ENDPOINT = "http://localhost:3001/botkit/receive";
 
 class ChatbotService:
     __instance = None

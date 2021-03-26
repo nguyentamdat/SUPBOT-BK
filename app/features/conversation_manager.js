@@ -1,5 +1,5 @@
 var rasa = require("../middlewares/middlewares")({
-    rasa_uri: "http://localhost:5000",
+    rasa_uri: `${process.env.AI_URL}`,
 });
 const debug = require("debug")("botkit:domains");
 const { BotkitConversation } = require("botkit");
@@ -15,7 +15,7 @@ module.exports = function (controller) {
         if (action == "connect") {
             let options = {
                 method: "POST",
-                uri: "http://localhost:3002/connect",
+                uri: "http://service:3000/connect",
                 body: {
                     state: {
                         user_id: message.user,
@@ -26,10 +26,18 @@ module.exports = function (controller) {
             };
             let res = await request(options);
             if (res.result.code == 0) {
-                await bot.reply(message, "Đã kết nối và đợi tin nhắn từ worker");
+                await bot.reply(message, { type: "typing" });
+                setTimeout(async () => {
+                    // will have to reset context because turn has now ended.
+                    await bot.changeContext(message.reference);
+                    await bot.reply(message, "Typed!");
+                }, 1000);
             } else {
                 await bot.reply(message, "Kết nối bị từ chối");
             }
+        }
+        if (action == "default") {
+            await bot.reply(message, "Bạn đã nhắn: " + message.text);
         }
     };
 
@@ -39,11 +47,12 @@ module.exports = function (controller) {
     };
 
     const onImage = async (bot, message) => {
+        debug("onImage");
         let base64 = message.image;
         if (base64) {
             let options = {
                 method: "POST",
-                uri: `http://localhost:5000/image`,
+                uri: `${process.env.AI_URL}/image`,
                 body: {
                     id: message.user,
                     base64: message.image,
@@ -57,11 +66,36 @@ module.exports = function (controller) {
                 if (isFashion) {
                     await bot.reply(message, "Đây là hình thời trang");
                 } else {
-                    await bot.reply(message, "Hình ảnh thuộc nhãn hàng khác");
+                    await bot.reply(
+                        message,
+                        "Xin lỗi bạn, hiện tại hệ thống chưa hỗ trợ sản phẩm này."
+                    );
                 }
             });
         }
     };
+
+    let typing = new BotkitConversation("typing", controller);
+
+    typing.say("I am going to type for a while now...");
+    typing.addAction("typing");
+
+    // start the typing indicator
+    typing.addMessage({ type: "typing" }, "typing");
+    // trigger a gotoThread, which gives us an opportunity to delay the next message
+    typing.addAction("next_thread", "typing");
+
+    typing.addMessage("typed!", "next_thread");
+
+    // use the before handler to delay the next message
+    typing.before("next_thread", async () => {
+        return new Promise((resolve) => {
+            // simulate some long running process
+            setTimeout(resolve, 3000);
+        });
+    });
+
+    controller.addDialog(typing);
 
     controller.on("welcome_back", onWelcomeBack);
     controller.on("hello", onWelcomeBack);

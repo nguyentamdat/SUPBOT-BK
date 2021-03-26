@@ -1,4 +1,4 @@
-from core.chatbot_service import ChatbotService
+from chatbot_service import ChatbotService
 import math
 import random
 from flask import Flask, jsonify, request

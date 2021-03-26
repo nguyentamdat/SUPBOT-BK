@@ -1,0 +1,35 @@
+version: '3.4'
+
+services:
+  app:
+    image: app
+    build:
+      context: ./app
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+      AI_URL: "http://core:5000"
+      SERVICE_URL: "http://service:3000"
+    ports:
+      - 3000:3000
+    depends_on:
+      - core
+      - service
+  
+  core:
+    image: core
+    build:
+      context: ./core
+      dockerfile: ./Dockerfile
+    ports:
+      - 5000:5000
+
+  service:
+    image: service
+    build:
+      context: ./service
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3001:3000

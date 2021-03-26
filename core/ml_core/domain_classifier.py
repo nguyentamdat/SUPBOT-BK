@@ -1,4 +1,4 @@
-from core.ml_core.abstract_classifier import AbstractClassifier
+from ml_core.abstract_classifier import AbstractClassifier
 import joblib
 
 
@@ -19,12 +19,12 @@ class DomainClassifier(AbstractClassifier):
 
 class NhaKhoaClassifier(DomainClassifier):
     def __init__(self):
-        super().__init__("../models/svm_nhakhoa.joblib")
+        super().__init__("./models/svm_nhakhoa.joblib")
 
 
 class BanHangClassifier(DomainClassifier):
     def __init__(self):
-        super().__init__("../models/svm_banhang.joblib")
+        super().__init__("./models/svm_banhang.joblib")
 
 
 if __name__ == "__main__":

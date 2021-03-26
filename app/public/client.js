@@ -397,8 +397,6 @@ var Botkit = {
 
         that.input = document.getElementById('messenger_input');
         
-        that.image = document.getElementById('image-preview');
-
         that.focus();
 
         that.on('connected', function () {
@@ -424,7 +422,8 @@ var Botkit = {
         that.on('typing', function () {
             that.clearReplies();
             that.renderMessage({
-                isTyping: true
+                isTyping: true,
+                text: "typing..."
             });
         });
 
