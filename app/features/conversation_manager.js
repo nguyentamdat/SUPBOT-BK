@@ -26,12 +26,7 @@ module.exports = function (controller) {
             };
             let res = await request(options);
             if (res.result.code == 0) {
-                await bot.reply(message, { type: "typing" });
-                setTimeout(async () => {
-                    // will have to reset context because turn has now ended.
-                    await bot.changeContext(message.reference);
-                    await bot.reply(message, "Typed!");
-                }, 1000);
+                
             } else {
                 await bot.reply(message, "Kết nối bị từ chối");
             }
