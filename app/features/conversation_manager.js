@@ -12,6 +12,19 @@ module.exports = function (controller) {
     const onMessage = async (bot, message) => {
         debug("OnMessage", message);
         let { action, domain, intent } = message.nlu;
+        if (
+            message.reference.domain &&
+            message.reference.domain == "BanHangClassifier"
+        ) {
+            let reply = await request({
+                method: "post",
+                body: { text: message.text, type: "message" },
+                json: true,
+                uri: message.reference.domain.url,
+            });
+            console.log(reply);
+            await bot.reply(message, reply.text);
+        }
         if (action == "connect") {
             let options = {
                 method: "POST",
@@ -26,9 +39,20 @@ module.exports = function (controller) {
             };
             let res = await request(options);
             if (res.result.code == 0) {
-                
+                let reply = await request({
+                    method: "post",
+                    body: { text: message.text, type: "message" },
+                    json: true,
+                    uri: res.result.url,
+                });
+                message.reference.domain = {
+                    url: res.result.url,
+                    domain: domain,
+                };
+                console.log(reply);
+                await bot.reply(message, reply.text);
             } else {
-                await bot.reply(message, "Kết nối bị từ chối");
+                await bot.reply(message, JSON.stringify(res.result));
             }
         }
         if (action == "default") {

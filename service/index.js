@@ -2,7 +2,7 @@
  * @author Đạt. Nguyễn Dương Minh Tâm
  * @email  nguyentamdat@gmail.com
  * @create date 22:17:57 09/03/2021
- * @modify date 14:50:45 18/03/2021
+ * @modify date 12:32:59 27/03/2021
  * @desc Code Hard, Life Easy!
  */
 
@@ -53,13 +53,23 @@ app.post("/connect", (req, res) => {
     if (error) {
         result.result = {
             code: -1,
-            message: error
+            message: error,
         };
         return res.json(result);
     }
+    for (let d in config.workers) {
+        if (d == value.domain) {
+            result.result = {
+                code: 0,
+                message: "accepted",
+                url: config.workers[d],
+            };
+            return res.json(result);
+        }
+    }
     result.result = {
-        code: 0,
-        message: "accepted"
+        code: 1,
+        message: "Domain not found",
     };
     return res.json(result);
 });
