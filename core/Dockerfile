@@ -10,8 +10,13 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Install pip requirements
+RUN apt-get update
+RUN apt-get install ffmpeg libsm6 libxext6  -y
 COPY requirements.txt .
 RUN --mount=type=cache,target=/root/.cache python -m pip install -r requirements.txt
+# RUN python -m pip install -r requirements.txt
+RUN python -m nltk.downloader -d /usr/share/nltk_data punkt
+# RUN cp //nltk_data /usr/local/nltk_data
 
 WORKDIR /app
 COPY . /app
@@ -23,4 +28,4 @@ RUN chown -R appuser /home
 USER appuser
 
 # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--timeout", "900", "app:app"]

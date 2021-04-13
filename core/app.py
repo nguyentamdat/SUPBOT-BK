@@ -23,3 +23,9 @@ def image():
     req = request.json
     result = service.receive_image(req['base64'])
     return jsonify(body=result)
+
+@app.route('/ask', methods=["POST"])
+def ask():
+    req = request.json
+    result = service.ask(req['question'])
+    return jsonify(body=result)

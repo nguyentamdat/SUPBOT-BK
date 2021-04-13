@@ -15,5 +15,8 @@
     "dotenv": "^7.0.0",
     "node-sass": "^5.0.0",
     "request-promise": "^4.2.6"
+  },
+  "devDependencies": {
+    "eslint": "^7.24.0"
   }
 }

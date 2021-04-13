@@ -3,13 +3,17 @@ from state_tracker import GeneralStateTracker
 import requests as req
 import json
 from ml_core.image_classifier import *
+from ml_core.qa_system import QAAgent
+from underthesea import pos_tag
+from ml_core.deep_one_class import DeepOneClass
 
 config_domain = ["NhaKhoaClassifier", "BanHangClassifier"]
 config = {
-    "THRESHOLD": 0.90
+    "THRESHOLD": 0.80
 }
-# TMT_ENDPOINT = "http://103.113.81.36:3000/botkit/receive";
-# TMT_ENDPOINT = "http://localhost:3001/botkit/receive";
+TAGSET = {
+    "pronoun": "P"
+};
 
 class ChatbotService:
     __instance = None
@@ -33,11 +37,14 @@ class ChatbotService:
             __cls[domain] = globals()[domain]()
         self.__cls = __cls
         self.__states = {}
+        # self.__qa = QAAgent()
+        self.__doc = DeepOneClass()
 
     def score_domains(self, msg, threshold):
         res = {}
         for domain in self.__cls:
             score = self.__cls[domain].classify(msg)
+            print(domain, score)
             if score > threshold:
                 res[domain] = score
         return res
@@ -54,6 +61,10 @@ class ChatbotService:
         state = self.__states.get(id, GeneralStateTracker(id))
 
         current_domain = state.get_domain()
+
+        tags = [x[1] for x in pos_tag(msg)]
+        isQuestion = any([(TAGSET["pronoun"] == x) for x in tags])
+        res["isQuestion"] = isQuestion
 
         print("Before state", state)
         if current_domain == "default":
@@ -86,6 +97,15 @@ class ChatbotService:
         #     print(data)
 
         return res
+
+    def ask(self, question):
+        try:
+            result = self.__qa.get_answer(question)
+        except:
+            result = ["", "Câu hỏi này khó quá!!!", ""]
+
+        return result
+
 
 if __name__ == "__main__":
     service = ChatbotService.get_instance()
