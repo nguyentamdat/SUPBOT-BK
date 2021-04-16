@@ -101,7 +101,8 @@ class ChatbotService:
     def ask(self, question):
         try:
             result = self.__qa.get_answer(question)
-        except:
+        except Exception as e:
+            print(e)
             result = ["", "Câu hỏi này khó quá!!!", ""]
 
         return result

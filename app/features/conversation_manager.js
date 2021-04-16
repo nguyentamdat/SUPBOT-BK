@@ -5,15 +5,88 @@ const debug = require("debug")("botkit:domains");
 const { BotkitConversation } = require("botkit");
 const request = require("request-promise");
 
-var UserState = [];
+var UserState = {};
 
 const _THREAD_HOLD = 0.1;
+
+defaultUserState = (ref) => ({
+  subscriber: [],
+  ref: ref,
+});
+
+function createUserState(m) {
+  for (let u in UserState) {
+    if (m.user === u) {
+      return UserState[u];
+    }
+  }
+  return defaultUserState(m.reference);
+}
+
+function getUserState(m) {
+  for (let u in UserState) {
+    if (m === u) {
+      return UserState[u];
+    }
+  }
+  return null;
+}
+
+function isOnline(user) {
+  for (let u in UserState) {
+    if (u === user) {
+      return true;
+    }
+  }
+  return false;
+}
 
 module.exports = function (controller) {
   controller.middleware.receive.use(rasa.receive);
 
+  controller.middleware.ingest.use(async (bot, message, next) => {
+    let userState = createUserState(message);
+    for (let subscriber of userState.subscriber) {
+      let notifyBot = await controller.spawn();
+      await notifyBot.changeContext(subscriber);
+      await notifyBot.say(`User ${subscriber.user.id} said: ` + message.text);
+    }
+    next();
+  });
+
+  controller.interrupts("subscribe", "message", async (bot, message) => {
+    let userState = createUserState(message);
+    let subscribe = message.text.split(" ")[1];
+    if (subscribe != null) {
+      let subscribeState = getUserState(subscribe);
+      subscribeState.subscriber.push(userState.ref);
+    }
+    return await bot.reply(
+      message,
+      "Bạn đã lắng nghe người dùng: " + subscribe
+    );
+  });
+
+  controller.interrupts("list", "message", async (bot, message) => {
+    let user = message.user;
+    let reply = [];
+    console.log(UserState);
+    for (let u in UserState) {
+      if (u !== user) {
+        reply.push({
+          title: u,
+          payload: `subscribe ${u}`,
+        });
+      }
+    }
+    await bot.reply(message, {
+      text: "Server hiện có các user sau",
+      quick_replies: reply,
+    });
+  });
+
   const onMessage = async (bot, message) => {
-    debug("OnMessage", message);
+    debug("[onMessage]", message);
     let { action, domain, intent, isQuestion } = message.nlu;
     if (isQuestion) {
       let options = {
@@ -36,7 +109,7 @@ module.exports = function (controller) {
         json: true,
         uri: message._config.domain.url,
       });
-      console.log(reply);
+      // console.log(reply);
       return await bot.reply(message, reply.text);
     }
     if (action == "connect") {
@@ -63,12 +136,9 @@ module.exports = function (controller) {
           url: res.result.url,
           domain: domain,
         };
-        console.log(reply);
-        await bot.reply(message, reply.text);
-      } else {
-        await bot.reply(message, JSON.stringify(res.result));
+        return await bot.reply(message, reply.text);
       }
-      return;
+      return await bot.reply(message, JSON.stringify(res.result));
     }
     if (action == "default") {
       return await bot.reply(message, "Bạn đã nhắn: " + message.text);
@@ -77,6 +147,7 @@ module.exports = function (controller) {
 
   const onWelcomeBack = async (bot, message) => {
     debug("Welcome back");
+    UserState[message.user] = await createUserState(message);
     await bot.reply(message, "Chào mừng bạn");
   };
 
@@ -117,28 +188,6 @@ module.exports = function (controller) {
       });
     }
   };
-
-  let typing = new BotkitConversation("typing", controller);
-
-  typing.say("I am going to type for a while now...");
-  typing.addAction("typing");
-
-  // start the typing indicator
-  typing.addMessage({ type: "typing" }, "typing");
-  // trigger a gotoThread, which gives us an opportunity to delay the next message
-  typing.addAction("next_thread", "typing");
-
-  typing.addMessage("typed!", "next_thread");
-
-  // use the before handler to delay the next message
-  typing.before("next_thread", async () => {
-    return new Promise((resolve) => {
-      // simulate some long running process
-      setTimeout(resolve, 3000);
-    });
-  });
-
-  controller.addDialog(typing);
 
   controller.on("welcome_back", onWelcomeBack);
   controller.on("hello", onWelcomeBack);
