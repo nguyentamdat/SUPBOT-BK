@@ -7,6 +7,8 @@ const request = require("request-promise");
 
 var UserState = [];
 
+const _THREAD_HOLD = 0.1;
+
 module.exports = function (controller) {
   controller.middleware.receive.use(rasa.receive);
 
@@ -95,8 +97,17 @@ module.exports = function (controller) {
       await request(options).then(async (response) => {
         debug("Rasa response", response);
         let isFashion = response.body.action;
-        if (isFashion) {
-          await bot.reply(message, "Đây là hình thời trang");
+        if (isFashion > _THREAD_HOLD) {
+          await bot.reply(message, {
+            text: "Bạn có muốn nhận hỗ trợ về sản phẩm này không?",
+            quick_replies: [
+              {
+                title: "Yes",
+                payload: "Yes",
+              },
+              { title: "No", payload: "No" },
+            ],
+          });
         } else {
           await bot.reply(
             message,

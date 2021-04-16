@@ -9,16 +9,15 @@ import csv
 from collections import OrderedDict
 import numpy as np
 
-_FASHION_CLASSES = ["clothing",
-                    "hat", "sports equipment"]
+_FASHION_CLASSES = ["clothing", "hat", "sports equipment"]
 
 
-class ImageClassifier(AbstractClassifier):
+class _ImageClassifier(AbstractClassifier):
     def classify(self, msg):
         input_batch = self.preprocess_img(self.decode_img(msg))
         if torch.cuda.is_available():
-            input_batch = input_batch.to('cuda')
-            self.model.to('cuda')
+            input_batch = input_batch.to("cuda")
+            self.model.to("cuda")
         with torch.no_grad():
             output = self.model(input_batch)
         probabilities = torch.nn.functional.softmax(output[0], dim=0)
@@ -28,7 +27,7 @@ class ImageClassifier(AbstractClassifier):
         return categories
 
     def get_top5(self, probabilities):
-        with open('./models/image_classes.txt', 'r') as f:
+        with open("./models/image_classes.txt", "r") as f:
             categories = [s.strip() for s in f.readlines()]
         top5_prob, top5_catid = torch.topk(probabilities, 5)
         result = []
@@ -38,8 +37,7 @@ class ImageClassifier(AbstractClassifier):
         return result
 
     def get_category(self, list_subcategory):
-        cat_to_lab, lab_to_cat = get_categories(
-            "./models/imagenet_categories.csv")
+        cat_to_lab, lab_to_cat = get_categories("./models/imagenet_categories.csv")
         # all_cats = list(cat_to_lab.keys())
         categories = []
         for label, probs in list_subcategory:
@@ -50,27 +48,33 @@ class ImageClassifier(AbstractClassifier):
 
     def __init__(self):
         self.model = torch.hub.load(
-            'pytorch/vision:v0.6.0', 'resnet18', pretrained=True)
+            "pytorch/vision:v0.6.0", "resnet18", pretrained=True
+        )
         self.model.eval()
 
     def decode_img(self, msg):
-        b64 = msg.split(',')[1]
+        b64 = msg.split(",")[1]
         msg = base64.b64decode(b64)
         buf = io.BytesIO(msg)
         return Image.open(buf)
 
     def preprocess_img(self, img):
-        preprocess = transforms.Compose([
-            transforms.Resize(256),
-            transforms.CenterCrop(224),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[
-                                 0.229, 0.224, 0.225]),
-        ])
+        preprocess = transforms.Compose(
+            [
+                transforms.Resize(256),
+                transforms.CenterCrop(224),
+                transforms.ToTensor(),
+                transforms.Normalize(
+                    mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                ),
+            ]
+        )
         return preprocess(img).unsqueeze(0)
 
 
-class FashionImageClassifier(ImageClassifier):
+class _FashionImageClassifier(_ImageClassifier):
+    instance = None
+
     def classify(self, msg):
         categories = super().classify(msg)
         print(categories)
@@ -96,13 +100,13 @@ def get_categories(filename):
                 continue
 
             row = np.array(row)
-            row = row[row != '']		# get rid of empty cells
+            row = row[row != ""]  # get rid of empty cells
 
             # The category is the first element in the row
             # the rest are the labels in that category
             cat = row[0]
             labs = row[1:]
-            assert(1+len(labs) == len(row))
+            assert 1 + len(labs) == len(row)
 
             # Store values in dictionaries if not yet there
             cat_to_lab[cat] = list(labs)
@@ -110,3 +114,9 @@ def get_categories(filename):
                 lab_to_cat[l.strip()] = cat
 
     return cat_to_lab, lab_to_cat
+
+
+def ImageClassifier():
+    if _FashionImageClassifier.instance is None:
+        _FashionImageClassifier.instance = _FashionImageClassifier()
+    return _FashionImageClassifier.instance

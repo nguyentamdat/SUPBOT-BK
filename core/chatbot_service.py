@@ -84,8 +84,8 @@ class ChatbotService:
         return res
 
     def receive_image(self, base64):
-        img_cls = FashionImageClassifier()
-        isFashion = img_cls.classify(base64)
+        img_cls = DeepOneClass()
+        isFashion = float(img_cls.predict(base64)[0])
         res = {}
         res["domain"] = "Image"
         res["action"] = isFashion
