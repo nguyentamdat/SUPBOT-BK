@@ -37,7 +37,7 @@ class ChatbotService:
             __cls[domain] = globals()[domain]()
         self.__cls = __cls
         self.__states = {}
-        # self.__qa = QAAgent()
+        self.__qa = QAAgent()
         self.__doc = DeepOneClass()
 
     def score_domains(self, msg, threshold):
