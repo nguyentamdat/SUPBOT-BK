@@ -18,3 +18,4 @@ uuid
 tqdm
 lxml
 tensorflow<2.4
+aitextgen

@@ -3,7 +3,8 @@ from utils.relevance_ranking import rel_ranking
 from utils.reader import Reader
 
 
-class QAAgent:
+class _QAAgent:
+    instance = None
     def __init__(self):
         self.googlesearch = GoogleSearch()
         self.reader = Reader()
@@ -29,3 +30,8 @@ class QAAgent:
         # print("Score  : ", answers[0][2])
 
         return answers[0] if len(answers) > 0 else ["", "Câu hỏi này khó quá!!!", ""]
+
+def QAAgent():
+    if _QAAgent.instance is None:
+        _QAAgent.instance = _QAAgent()
+    return _QAAgent.instance

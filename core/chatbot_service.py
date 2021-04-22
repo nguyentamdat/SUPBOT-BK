@@ -6,6 +6,7 @@ from ml_core.image_classifier import *
 from ml_core.qa_system import QAAgent
 from underthesea import pos_tag
 from ml_core.deep_one_class import DeepOneClass
+from ml_core.text_generator import TextGenerator
 
 config_domain = ["NhaKhoaClassifier", "BanHangClassifier"]
 config = {
@@ -37,8 +38,9 @@ class ChatbotService:
             __cls[domain] = globals()[domain]()
         self.__cls = __cls
         self.__states = {}
-        self.__qa = QAAgent()
-        self.__doc = DeepOneClass()
+        # self.__qa = QAAgent()
+        # self.__doc = DeepOneClass()
+        self.__text_gen = TextGenerator()
 
     def score_domains(self, msg, threshold):
         res = {}
@@ -65,6 +67,7 @@ class ChatbotService:
         tags = [x[1] for x in pos_tag(msg)]
         isQuestion = any([(TAGSET["pronoun"] == x) for x in tags])
         res["isQuestion"] = isQuestion
+        res["reply"] = self.__text_gen.generate_response(msg)
 
         print("Before state", state)
         if current_domain == "default":
