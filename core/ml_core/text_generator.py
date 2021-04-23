@@ -1,17 +1,19 @@
 from aitextgen import aitextgen
+import os
 
-MODEL_PATH = "models/trained_model"
-TOKENIZER_PATH = "models/aitextgen.tokenizer.json"
+MODEL_PATH = os.path.join("models", "trained_model")
+TOKENIZER_PATH = os.path.join("models", "aitextgen.tokenizer.json")
 
 
 class _TextGenerator:
     instance = None
 
     def __init__(self):
-        self.ai = aitextgen(model_folder="models/trained_model", tokenizer_file="models/aitextgen.tokenizer.json")
+        print(MODEL_PATH, TOKENIZER_PATH)
+        self.ai = aitextgen(model_folder=MODEL_PATH, tokenizer_file=TOKENIZER_PATH)
 
     def generate_response(self, text):
-        res = self.ai.generate_one(prompt=text + "\n")
+        res = self.ai.generate_one(prompt=text + "\n", temperature=1.0, top_p=0.9)
         return res.split("\n")[1]
 
 
