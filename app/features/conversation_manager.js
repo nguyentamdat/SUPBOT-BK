@@ -87,7 +87,7 @@ module.exports = function (controller) {
 
   const onMessage = async (bot, message) => {
     debug("[onMessage]", message);
-    let { action, domain, intent, isQuestion } = message.nlu;
+    let { action, domain, intent, isQuestion, reply } = message.nlu;
     if (isQuestion) {
       let options = {
         uri: `${process.env.AI_URL}/ask`,
@@ -141,7 +141,7 @@ module.exports = function (controller) {
       return await bot.reply(message, JSON.stringify(res.result));
     }
     if (action == "default") {
-      return await bot.reply(message, message.reply);
+      return await bot.reply(message, reply);
     }
   };
 
