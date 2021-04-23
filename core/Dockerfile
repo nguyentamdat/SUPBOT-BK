@@ -9,10 +9,11 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # Turns off buffering for easier container logging
 ENV PYTHONUNBUFFERED=1
 
-# Install pip requirements
 RUN apt-get update
 RUN apt-get install ffmpeg libsm6 libxext6  -y
+# Install pip requirements
 COPY requirements.txt .
+RUN pip install wheel
 RUN --mount=type=cache,target=/root/.cache python -m pip install -r requirements.txt
 # RUN python -m pip install -r requirements.txt
 RUN python -m nltk.downloader -d /usr/share/nltk_data punkt
