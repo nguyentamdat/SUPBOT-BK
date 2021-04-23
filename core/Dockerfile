@@ -13,8 +13,8 @@ ENV PYTHONUNBUFFERED=1
 RUN apt-get update
 RUN apt-get install ffmpeg libsm6 libxext6  -y
 COPY requirements.txt .
-RUN --mount=type=cache,target=/root/.cache python -m pip install -r requirements.txt
-# RUN python -m pip install -r requirements.txt
+# RUN --mount=type=cache,target=/root/.cache python -m pip install -r requirements.txt
+RUN python -m pip install -r requirements.txt
 RUN python -m nltk.downloader -d /usr/share/nltk_data punkt
 # RUN cp //nltk_data /usr/local/nltk_data
 
