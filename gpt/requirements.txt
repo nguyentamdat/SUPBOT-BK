@@ -1,0 +1,2 @@
+Flask
+aitextgen==0.5.0
