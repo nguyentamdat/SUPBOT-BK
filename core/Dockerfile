@@ -8,7 +8,7 @@ find /app/.venv \( -type d -a -name test -o -name tests \) -o \( -type f -a -nam
 
 FROM python:3.8-slim
 WORKDIR /app
-RUN apt update && apt install --no-install-recommends ffmpeg libsm6 libxext6 -y
+RUN apt-get update && apt-get install --no-install-recommends ffmpeg libsm6 libxext6 -y
 COPY --from=builder /app /app
 COPY . .
 ENV PATH="/app/.venv/bin:$PATH"
