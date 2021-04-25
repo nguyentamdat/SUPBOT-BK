@@ -29,22 +29,22 @@ def index():
 
 
 @app.post("/chat")
-def chat():
-    req = request.json
+def chat(request: Chat):
+    req = request.dict()
     res = service.receive(req["id"], req["text"])
     return res
 
 
 @app.post("/image")
-def image():
-    req = request.json
+def image(request: Image):
+    req = request.dict()
     result = service.receive_image(req["base64"])
     return result
 
 
 @app.post("/ask")
-def ask():
-    req = request.json
+def ask(request: Ask):
+    req = request.dict()
     result = service.ask(req["question"])
     return result
 
