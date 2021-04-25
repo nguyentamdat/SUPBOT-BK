@@ -91,6 +91,7 @@ class ChatbotService:
         res["domain"] = "Image"
         res["action"] = isFashion
         res["intent"] = "image_class"
+        res["isQuestion"] = False
 
         return res
 

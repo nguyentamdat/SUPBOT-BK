@@ -44,7 +44,7 @@ module.exports = (config) => {
 
             request(options).then((response) => {
                 debug("Rasa response", response);
-                message.nlu = response.body;
+                message.nlu = response;
                 next();
             });
         },
@@ -53,18 +53,18 @@ module.exports = (config) => {
             debug("Patterns", patterns);
             return async (message) => {
                 if (
-                    message.body.domain.toLowerCase() !== domain.toLowerCase()
+                    message.domain.toLowerCase() !== domain.toLowerCase()
                 ) {
                     return false;
                 }
                 return patterns.some((pattern) => {
                     if (
-                        message.body.intent.toLowerCase() ===
+                        message.intent.toLowerCase() ===
                         pattern.toLowerCase()
                     ) {
                         debug(
                             "Rasa intent matched hear pattern",
-                            message.body.intent,
+                            message.intent,
                             pattern
                         );
                         return true;
