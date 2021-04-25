@@ -1,8 +1,8 @@
 from aitextgen import aitextgen
 import os
 
-MODEL_PATH = os.path.join("models", "trained_model")
-TOKENIZER_PATH = os.path.join("models", "aitextgen.tokenizer.json")
+MODEL_PATH = "trained_model"
+TOKENIZER_PATH = "aitextgen.tokenizer.json"
 
 
 class _TextGenerator:
@@ -12,7 +12,7 @@ class _TextGenerator:
         print(MODEL_PATH, TOKENIZER_PATH)
         self.ai = aitextgen(model_folder=MODEL_PATH, tokenizer_file=TOKENIZER_PATH)
 
-    def generate_response(self, text):
+    def generate_one(self, text):
         res = self.ai.generate_one(prompt=text + "\n", temperature=1.0, top_p=0.9)
         return res.split("\n")[1]
 

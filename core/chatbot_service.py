@@ -2,19 +2,15 @@ from ml_core.domain_classifier import *
 from state_tracker import GeneralStateTracker
 import requests as req
 import json
-from ml_core.image_classifier import *
+# from ml_core.image_classifier import *
 from ml_core.qa_system import QAAgent
 from underthesea import pos_tag
 from ml_core.deep_one_class import DeepOneClass
-from ml_core.text_generator import TextGenerator
 
-config_domain = ["NhaKhoaClassifier", "BanHangClassifier"]
-config = {
-    "THRESHOLD": 0.80
-}
-TAGSET = {
-    "pronoun": "P"
-};
+config_domain = ["BanHangClassifier"]
+config = {"THRESHOLD": 0.80}
+TAGSET = {"pronoun": "P"}
+WHO_Q = ["ai", "người nào"]
 
 class ChatbotService:
     __instance = None
@@ -40,7 +36,6 @@ class ChatbotService:
         self.__states = {}
         self.__qa = QAAgent()
         self.__doc = DeepOneClass()
-        self.__text_gen = TextGenerator()
 
     def score_domains(self, msg, threshold):
         res = {}
@@ -64,10 +59,11 @@ class ChatbotService:
 
         current_domain = state.get_domain()
 
-        tags = [x[1] for x in pos_tag(msg)]
-        isQuestion = any([(TAGSET["pronoun"] == x) for x in tags])
+        pos_tagged = pos_tag(msg)
+        tags = [x[1] for x in pos_tagged]
+        words = [x[0] for x in pos_tagged]
+        isQuestion = any([(TAGSET["pronoun"] == x) for x in tags]) | any([y == x for x in words for y in WHO_Q])
         res["isQuestion"] = isQuestion
-        res["reply"] = self.__text_gen.generate_response(msg)
 
         print("Before state", state)
         if current_domain == "default":

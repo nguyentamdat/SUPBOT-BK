@@ -33,7 +33,7 @@ module.exports = (config) => {
             if (message.text) {
                 options = {
                     method: "POST",
-                    uri: `${config.rasa_uri}/domain`,
+                    uri: `${config.rasa_uri}/chat`,
                     body: {
                         text: message.text,
                         id: message.user,

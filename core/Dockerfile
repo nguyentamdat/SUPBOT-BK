@@ -1,32 +1,18 @@
-# For more information, please refer to https://aka.ms/vscode-docker-python
-FROM python:3.8-slim-buster
+FROM python:3.8-slim AS base
 
-EXPOSE 5000
-
-# Keeps Python from generating .pyc files in the container
-ENV PYTHONDONTWRITEBYTECODE=1
-
-# Turns off buffering for easier container logging
-ENV PYTHONUNBUFFERED=1
-
-RUN apt-get update
-RUN apt-get install ffmpeg libsm6 libxext6 build-essential -y
-# Install pip requirements
-COPY requirements.txt .
-RUN pip install wheel
-RUN --mount=type=cache,target=/root/.cache python -m pip install -r requirements.txt
-# RUN python -m pip install -r requirements.txt
-RUN python -m nltk.downloader -d /usr/share/nltk_data punkt
-# RUN cp //nltk_data /usr/local/nltk_data
-
+FROM base AS builder
 WORKDIR /app
-COPY . /app
+RUN python -m venv .venv  && \
+.venv/bin/pip install --no-cache-dir -U pip setuptools
+COPY requirements.txt .
+RUN .venv/bin/pip install --no-cache-dir -r requirements.txt && \
+find /app/.venv \( -type d -a -name test -o -name tests \) -o \( -type f -a -name '*.pyc' -o -name '*.pyo' \) -exec rm -rf '{}' \+
 
-# Creates a non-root user and adds permission to access the /app folder
-# For more info, please refer to https://aka.ms/vscode-docker-python-configure-containers
-RUN useradd appuser && chown -R appuser /app
-RUN chown -R appuser /home
-USER appuser
-
-# During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--timeout", "900", "app:app"]
+FROM python:3.8-slim
+WORKDIR /app
+RUN apt update && apt install --no-install-recommends ffmpeg libsm6 libxext6 -y
+COPY --from=builder /app /app
+COPY . .
+ENV PATH="/app/.venv/bin:$PATH"
+EXPOSE 5000
+CMD [ "python", "app.py" ]

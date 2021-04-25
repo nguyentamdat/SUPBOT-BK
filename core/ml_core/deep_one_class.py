@@ -1,6 +1,4 @@
 from tensorflow.keras import models
-from sklearn.neighbors import LocalOutlierFactor
-from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 import cv2 as cv
 from PIL import Image
@@ -9,14 +7,16 @@ from tensorflow.keras import backend as K
 import tensorflow as tf
 import base64
 import io
+import joblib
 
 # import tensorflow_datasets as tfds
 
-image_dir = "./dataset/image/"
 input_shape = (96, 96, 3)
 classes = 20
 batchsize = 4
 ENCODER_PATH = "./models/encoder-image"
+LOF_PATH = "./models/localoutlinerfactor.joblib"
+MMS_PATH = "./models/minmaxscaler.joblib"
 
 
 class _DeepOneClass:
@@ -29,23 +29,22 @@ class _DeepOneClass:
         self.__encoder = models.load_model(
             ENCODER_PATH, custom_objects={"original_loss": original_loss}
         )
-        self.__ms = MinMaxScaler()
-        data = (
-            preprocessing.image_dataset_from_directory(
-                image_dir,
-                label_mode="int",
-                image_size=input_shape[:2],
-                batch_size=batchsize,
-            )
-            .map(normalize_img, tf.data.experimental.AUTOTUNE)
-            .map(resize_img, tf.data.experimental.AUTOTUNE)
-            .map(get_x, tf.data.experimental.AUTOTUNE)
-            .cache()
-            .prefetch(tf.data.experimental.AUTOTUNE)
-        )
-        train_data = self.__ms.fit_transform(self.__encoder.predict(data))
-        self.__clf = LocalOutlierFactor(n_neighbors=1, novelty=True)
-        self.__clf.fit(train_data)
+        self.__ms = joblib.load(MMS_PATH)
+        # data = (
+        #     preprocessing.image_dataset_from_directory(
+        #         image_dir,
+        #         label_mode="int",
+        #         image_size=input_shape[:2],
+        #         batch_size=batchsize,
+        #     )
+        #     .map(normalize_img, tf.data.experimental.AUTOTUNE)
+        #     .map(resize_img, tf.data.experimental.AUTOTUNE)
+        #     .map(get_x, tf.data.experimental.AUTOTUNE)
+        #     .cache()
+        #     .prefetch(tf.data.experimental.AUTOTUNE)
+        # )
+        # train_data = self.__ms.fit_transform(self.__encoder.predict(data))
+        self.__clf = joblib.load(LOF_PATH)
 
     def predict(self, image):
         image = decode_img(image)

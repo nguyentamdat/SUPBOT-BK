@@ -141,7 +141,16 @@ module.exports = function (controller) {
       return await bot.reply(message, JSON.stringify(res.result));
     }
     if (action == "default") {
-      return await bot.reply(message, reply);
+      let options = {
+        method: "POST",
+        uri: `${process.env.GPT_URL}/api/generate`,
+        body: {
+          text: message.text
+        },
+        json: true,
+      };
+      let res = await request(options);
+      return await bot.reply(message, res.body.text);
     }
   };
 
