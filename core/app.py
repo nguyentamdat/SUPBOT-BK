@@ -1,33 +1,53 @@
+import uvicorn
+from fastapi import FastAPI
+from pydantic import BaseModel
 from chatbot_service import ChatbotService
 import math
 import random
-from flask import Flask, jsonify, request
 
-app = Flask(__name__)
+app = FastAPI()
 
 service = ChatbotService.get_instance()
 
 
-@app.route("/chat", methods=["POST"])
-def hello():
+class Chat(BaseModel):
+    id: str
+    text: str
+
+
+class Image(BaseModel):
+    base64: str
+
+
+class Ask(BaseModel):
+    question: str
+
+
+@app.get("/")
+def index():
+    return "Multi chatbot backend AI"
+
+
+@app.post("/chat")
+def chat():
     req = request.json
     res = service.receive(req["id"], req["text"])
-    return jsonify(body=res)
+    return res
 
 
-@app.route("/image", methods=["POST"])
+@app.post("/image")
 def image():
     req = request.json
     result = service.receive_image(req["base64"])
-    return jsonify(body=result)
+    return result
 
 
-@app.route("/ask", methods=["POST"])
+@app.post("/ask")
 def ask():
     req = request.json
     result = service.ask(req["question"])
-    return jsonify(body=result)
+    return result
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    uvicorn.run(app, host="0.0.0.0", port=5000)

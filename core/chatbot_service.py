@@ -1,7 +1,6 @@
 from ml_core.domain_classifier import *
 from state_tracker import GeneralStateTracker
-import requests as req
-import json
+
 # from ml_core.image_classifier import *
 from ml_core.qa_system import QAAgent
 from underthesea import pos_tag
@@ -11,6 +10,7 @@ config_domain = ["BanHangClassifier"]
 config = {"THRESHOLD": 0.80}
 TAGSET = {"pronoun": "P"}
 WHO_Q = ["ai", "người nào"]
+
 
 class ChatbotService:
     __instance = None
@@ -62,7 +62,9 @@ class ChatbotService:
         pos_tagged = pos_tag(msg)
         tags = [x[1] for x in pos_tagged]
         words = [x[0] for x in pos_tagged]
-        isQuestion = any([(TAGSET["pronoun"] == x) for x in tags]) | any([y == x for x in words for y in WHO_Q])
+        isQuestion = any([(TAGSET["pronoun"] == x) for x in tags]) | any(
+            [y == x for x in words for y in WHO_Q]
+        )
         res["isQuestion"] = isQuestion
 
         print("Before state", state)
@@ -89,11 +91,6 @@ class ChatbotService:
         res["domain"] = "Image"
         res["action"] = isFashion
         res["intent"] = "image_class"
-        # if isFashion:
-        #     payload = {"image": base64, "user": "master", "type": "image"}
-        #     r = req.post(TMT_ENDPOINT, json=payload)
-        #     data = r.json()
-        #     print(data)
 
         return res
 
