@@ -97,7 +97,7 @@ module.exports = function (controller) {
         method: "post",
       };
       let res = await request(options);
-      return await bot.reply(message, res.body[1]);
+      return await bot.reply(message, res[1]);
     }
     if (
       bot._config.domain !== undefined &&
@@ -150,7 +150,7 @@ module.exports = function (controller) {
         json: true,
       };
       let res = await request(options);
-      return await bot.reply(message, res.body.text);
+      return await bot.reply(message, res.text);
     }
   };
 
