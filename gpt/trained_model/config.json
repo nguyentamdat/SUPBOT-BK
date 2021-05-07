@@ -10,12 +10,13 @@
   "gradient_checkpointing": false,
   "initializer_range": 0.02,
   "layer_norm_epsilon": 1e-05,
+  "line_by_line": false,
   "model_type": "gpt2",
   "n_ctx": 32,
   "n_embd": 256,
-  "n_head": 4,
+  "n_head": 8,
   "n_inner": null,
-  "n_layer": 4,
+  "n_layer": 8,
   "n_positions": 32,
   "resid_pdrop": 0.0,
   "summary_activation": null,
@@ -25,5 +26,5 @@
   "summary_use_proj": true,
   "transformers_version": "4.5.1",
   "use_cache": true,
-  "vocab_size": 5000
+  "vocab_size": 50000
 }

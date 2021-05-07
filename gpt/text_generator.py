@@ -2,7 +2,7 @@ from aitextgen import aitextgen
 import os
 
 MODEL_PATH = "trained_model"
-TOKENIZER_PATH = "aitextgen.tokenizer.json"
+TOKENIZER_PATH = "trained_model/aitextgen.tokenizer.json"
 
 
 class _TextGenerator:
