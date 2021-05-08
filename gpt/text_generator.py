@@ -12,9 +12,13 @@ class _TextGenerator:
         print(MODEL_PATH, TOKENIZER_PATH)
         self.ai = aitextgen(model_folder=MODEL_PATH, tokenizer_file=TOKENIZER_PATH)
 
-    def generate_one(self, text):
-        res = self.ai.generate_one(prompt=text + "\n", temperature=1.0, top_p=0.9)
-        return res.split("\n")[1]
+    def generate_one(self, text, idx):
+        try:
+            res = self.ai.generate_one(prompt=text + "\n", temperature=1.0, top_p=0.9)
+            return res.split("\n")[idx]
+        except:
+            return "Xin lỗi bạn, tôi không biết phải nói gì nữa!"
+
 
 
 def TextGenerator():

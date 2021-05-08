@@ -17,7 +17,8 @@ class Text(BaseModel):
 def generate(data: Text):
     data = data.dict()
     text = "\n".join(data["text"])
-    reply = ai.generate_one(text)
+    idx = len(data["text"])
+    reply = ai.generate_one(text, idx)
     return {"text": reply}
 
 
