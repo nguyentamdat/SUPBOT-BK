@@ -100,7 +100,7 @@ module.exports = function (controller) {
 
   const onMessage = async (bot, message) => {
     debug("[onMessage]", message);
-    let { action, domain, intent, isQuestion } = message.nlu;
+    let { action, domain, intent, isQuestion, history } = message.nlu;
     if (isQuestion) {
       let options = {
         uri: `${process.env.AI_URL}/ask`,
@@ -158,7 +158,7 @@ module.exports = function (controller) {
         method: "POST",
         uri: `${process.env.GPT_URL}/generate`,
         body: {
-          text: message.history,
+          text: history,
         },
         json: true,
       };
