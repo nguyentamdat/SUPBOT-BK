@@ -67,10 +67,10 @@ class ChatbotService:
         )
         res["isQuestion"] = isQuestion
 
-        print("Before state", state)
+        # print("Before state", state)
         if current_domain == "default":
             domain = self.domain_recognize(msg)
-            print(domain)
+            # print(domain)
             if domain != "default":
                 state.__domain = domain
                 state.next_action = "connect"
@@ -78,9 +78,18 @@ class ChatbotService:
                 res["domain"] = domain
                 res["intent"] = "connect"
         state.add_state(msg)
-        print("After state", state)
+        # print("After state", state)
 
         self.__states[id] = state
+        res["history"] = state.get_state()
+
+        return res
+
+    def add_bot_msg(self, id, msg):
+        res = {"status": 0}
+
+        state = self.__states.get(id, GeneralStateTracker(id))
+        state.add_state(msg)
 
         return res
 

@@ -44,6 +44,11 @@ function isOnline(user) {
 module.exports = function (controller) {
   controller.middleware.receive.use(rasa.receive);
 
+  controller.middleware.send.use(async (bot, message, next) => {
+    console.log("SENT: " + message);
+    next();
+  });
+
   controller.middleware.ingest.use(async (bot, message, next) => {
     let userState = createUserState(message);
     for (let subscriber of userState.subscriber) {
@@ -145,7 +150,7 @@ module.exports = function (controller) {
         method: "POST",
         uri: `${process.env.GPT_URL}/generate`,
         body: {
-          text: message.text
+          text: message.history
         },
         json: true,
       };

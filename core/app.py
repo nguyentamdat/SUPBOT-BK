@@ -22,6 +22,10 @@ class Image(BaseModel):
 class Ask(BaseModel):
     question: str
 
+class BotChat(BaseModel):
+    id: str,
+    text: str
+
 
 @app.get("/")
 def index():
@@ -46,6 +50,12 @@ def image(request: Image):
 def ask(request: Ask):
     req = request.dict()
     result = service.ask(req["question"])
+    return result
+
+@app.post("/bot")
+def bot_chat(request: BotChat):
+    req = request.dict()
+    result = service.add_bot_msg(req["id"], req["text"])
     return result
 
 

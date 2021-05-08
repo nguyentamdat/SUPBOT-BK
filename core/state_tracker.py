@@ -26,5 +26,8 @@ class GeneralStateTracker(StateTracker):
     def get_domain(self):
         return self.__domain
 
+    def get_state(self):
+        return self.__state
+
     def __str__(self):
         return self.__state.__str__() + " " + self.next_action + " " + " " + self.__domain + " " + self.__id
