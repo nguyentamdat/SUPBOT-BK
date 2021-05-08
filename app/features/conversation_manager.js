@@ -46,7 +46,7 @@ module.exports = function (controller) {
 
   controller.middleware.send.use(async (bot, message, next) => {
     let options = {
-      uri: `${process.env.AI_URL}/ask`,
+      uri: `${process.env.AI_URL}/bot`,
       json: {
         text: message.text,
         id: message.conversation.id,
