@@ -16,7 +16,7 @@ class Text(BaseModel):
 @app.post("/generate")
 def generate(data: Text):
     data = data.dict()
-    text = data["text"].join("\n")
+    text = "\n".join(data["text"])
     reply = ai.generate_one(text)
     return {"text": reply}
 
