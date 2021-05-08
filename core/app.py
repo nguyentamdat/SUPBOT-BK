@@ -22,8 +22,9 @@ class Image(BaseModel):
 class Ask(BaseModel):
     question: str
 
+
 class BotChat(BaseModel):
-    id: str,
+    id: str
     text: str
 
 
@@ -51,6 +52,7 @@ def ask(request: Ask):
     req = request.dict()
     result = service.ask(req["question"])
     return result
+
 
 @app.post("/bot")
 def bot_chat(request: BotChat):
