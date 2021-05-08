@@ -15,6 +15,7 @@ class _TextGenerator:
     def generate_one(self, text, idx):
         try:
             res = self.ai.generate_one(prompt=text + "\n", temperature=1.0, top_p=0.9)
+            print(res)
             return res.split("\n")[idx]
         except:
             return "Xin lỗi bạn, tôi không biết phải nói gì nữa!"
