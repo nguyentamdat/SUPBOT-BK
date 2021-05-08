@@ -45,7 +45,15 @@ module.exports = function (controller) {
   controller.middleware.receive.use(rasa.receive);
 
   controller.middleware.send.use(async (bot, message, next) => {
-    console.log("SENT: " + JSON.stringify(message));
+    let options = {
+      uri: `${process.env.AI_URL}/ask`,
+      json: {
+        text: message.text,
+        id: message.conversation.id,
+      },
+      method: "post",
+    };
+    let result = await request(options);
     next();
   });
 
@@ -150,7 +158,7 @@ module.exports = function (controller) {
         method: "POST",
         uri: `${process.env.GPT_URL}/generate`,
         body: {
-          text: message.history
+          text: message.history,
         },
         json: true,
       };
