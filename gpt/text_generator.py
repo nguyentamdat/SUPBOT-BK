@@ -18,7 +18,7 @@ class _TextGenerator:
             print(res)
             return res.split("\n")[idx]
         except:
-            return "Xin lỗi bạn, tôi không biết phải nói gì nữa!"
+            return ""
 
 
 

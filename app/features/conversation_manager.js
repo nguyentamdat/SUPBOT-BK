@@ -163,7 +163,10 @@ module.exports = function (controller) {
         json: true,
       };
       let res = await request(options);
-      return await bot.reply(message, res.text);
+      return await bot.reply(
+        message,
+        res.text === "" ? "Tôi không thể hiểu bạn!" : res.text
+      );
     }
   };
 
