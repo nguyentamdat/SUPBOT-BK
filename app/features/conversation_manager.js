@@ -45,7 +45,7 @@ module.exports = function (controller) {
   controller.middleware.receive.use(rasa.receive);
 
   controller.middleware.send.use(async (bot, message, next) => {
-    console.log("SENT: " + message);
+    console.log("SENT: " + JSON.stringify(message));
     next();
   });
 
