@@ -11,5 +11,6 @@ WORKDIR /app
 COPY --from=builder /app /app
 COPY . .
 ENV PATH="/app/.venv/bin:$PATH"
+RUN rasa train
 EXPOSE 5005
 CMD [ "rasa", "run", "--enable-api" ]
