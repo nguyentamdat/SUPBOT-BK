@@ -1,0 +1,15 @@
+version: "2.0"
+
+intents:
+  - greet
+  - goodbye
+  - ask_name
+  - ask_age
+  - ask_love
+  - ask_location
+  - ask_gender
+  - ask_weather
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

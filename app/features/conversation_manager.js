@@ -4,6 +4,7 @@ var rasa = require("../middlewares/middlewares")({
 const debug = require("debug")("botkit:domains");
 const { BotkitConversation } = require("botkit");
 const request = require("request-promise");
+const Response = require("../response/response");
 
 var UserState = {};
 
@@ -101,6 +102,8 @@ module.exports = function (controller) {
   const onMessage = async (bot, message) => {
     debug("[onMessage]", message);
     let { action, domain, intent, isQuestion, history } = message.nlu;
+
+    // handle question first
     if (isQuestion) {
       let options = {
         uri: `${process.env.AI_URL}/ask`,
@@ -112,6 +115,8 @@ module.exports = function (controller) {
       let res = await request(options);
       return await bot.reply(message, res[1]);
     }
+
+    // handle chat with client
     if (
       bot._config.domain !== undefined &&
       bot._config.domain == "BanHangClassifier"
@@ -122,9 +127,18 @@ module.exports = function (controller) {
         json: true,
         uri: message._config.domain.url,
       });
-      // console.log(reply);
       return await bot.reply(message, reply.text);
     }
+
+    // handle normal chat
+    if (Response[message.intent])
+    {
+      let res = Response[message.intent];
+      let len = res.length;
+      return await bot.reply(message, res[Math.floor(Math.random() * len)]);
+    }
+
+    // handle connect to client
     if (action == "connect") {
       let options = {
         method: "POST",
@@ -153,6 +167,8 @@ module.exports = function (controller) {
       }
       return await bot.reply(message, JSON.stringify(res.result));
     }
+
+    // handle auto generate chat from gpt server
     if (action == "default") {
       let options = {
         method: "POST",

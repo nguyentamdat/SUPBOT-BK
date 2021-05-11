@@ -11,6 +11,7 @@ services:
       AI_URL: "http://core:5000"
       SERVICE_URL: "http://service:3000"
       GPT_URL: "http://gpt:5000"
+      RASA_URL: "http://rasa:5005"
     ports:
       - 80:3000
     depends_on:
@@ -43,3 +44,11 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - 3002:5000
+
+  rasa:
+    image: rasa-nlu
+    ports:
+      - 5005:5005
+    build:
+      context: ./simple-chatbot
+      dockerfile: ./Dockerfile

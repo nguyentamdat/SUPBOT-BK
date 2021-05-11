@@ -1,0 +1,77 @@
+version: "2.0"
+
+nlu:
+- intent: greet
+  examples: |
+    - hey
+    - hello
+    - hi
+    - chào
+    - xin chào
+    - chào bạn
+    - alo
+    - alo alo
+    - này
+    - ê
+    - chào buổi sáng
+    - chào buổi trưa
+    - chào buổi tối
+
+- intent: goodbye
+  examples: |
+    - good afternoon
+    - chào tạm biệt
+    - good bye
+    - cee you later
+    - good night
+    - bye
+    - goodbye
+    - have a nice day
+    - see you around
+    - bye bye
+    - see you later
+    - tạm biệt
+    - đi nhé
+    - hẹn gặp lại
+    - gặp lại sau
+    - bái bai
+
+- intent: ask_name
+  examples: |
+    - bạn tên gì?
+    - tên bạn là gì?
+    - tên gì?
+    - cậu tên gì?
+    - gọi cậu là gì?
+    - gọi bạn là gì?
+    - tên của bạn là gì?
+
+- intent: ask_age
+  examples: |
+    - bạn bao nhiêu tuổi?
+    - cậu bao nhiêu tuổi?
+    - bạn tuổi gì?
+    - bao nhiêu tuổi?
+    - sinh năm bao nhiêu?
+
+- intent: ask_love
+  examples: |
+    - có người yêu chưa?
+    - có ai yêu cậu không?
+    - bạn có thích ai không?
+  
+- intent: ask_location
+  examples: |
+    - sống ở đâu?
+    - bạn sống ở đâu?
+
+- intent: ask_gender
+  examples: |
+    - bạn là nam hay nữ?
+    - giới tính của bạn là gì?
+    - cậu là con trai hay con gái
+
+- intent: ask_weather
+  examples: |
+    - thời tiết hôm nay thế nào?
+    - trời hôm nay thế nào?
