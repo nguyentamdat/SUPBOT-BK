@@ -8,3 +8,5 @@ models/
 dataset/
 .venv/
 cached/
+opensub-gpt/
+new-opensub-gpt/

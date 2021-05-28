@@ -1,8 +1,8 @@
 from aitextgen import aitextgen
 import os
 
-MODEL_PATH = "trained_model"
-TOKENIZER_PATH = "trained_model/aitextgen.tokenizer.json"
+MODEL_PATH = "opensub-gpt"
+TOKENIZER_PATH = MODEL_PATH + "/aitextgen.tokenizer.json"
 
 
 class _TextGenerator:
@@ -15,7 +15,7 @@ class _TextGenerator:
     def generate_one(self, text, idx):
         try:
             res = self.ai.generate_one(prompt=text + "\n", temperature=1.0, top_p=0.9)
-            print(res)
+            # print(res)
             return res.split("\n")[idx]
         except:
             return ""

@@ -131,8 +131,7 @@ module.exports = function (controller) {
     }
 
     // handle normal chat
-    if (Response[message.intent])
-    {
+    if (Response[message.intent]) {
       let res = Response[message.intent];
       let len = res.length;
       return await bot.reply(message, res[Math.floor(Math.random() * len)]);

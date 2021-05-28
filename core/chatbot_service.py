@@ -7,9 +7,7 @@ from underthesea import pos_tag
 from ml_core.deep_one_class import DeepOneClass
 
 config_domain = ["BanHangClassifier"]
-config = {"THRESHOLD": 0.80}
-TAGSET = {"pronoun": "P"}
-WHO_Q = ["ai", "người nào"]
+config = {"THRESHOLD": 0.90}
 
 
 class ChatbotService:
@@ -62,9 +60,7 @@ class ChatbotService:
         pos_tagged = pos_tag(msg)
         tags = [x[1] for x in pos_tagged]
         words = [x[0] for x in pos_tagged]
-        isQuestion = any([(TAGSET["pronoun"] == x) for x in tags]) | any(
-            [y == x for x in words for y in WHO_Q]
-        )
+        isQuestion = any([x[0] == "ai" and x[1] == "P" for x in pos_tagged])
         res["isQuestion"] = isQuestion
 
         # print("Before state", state)
