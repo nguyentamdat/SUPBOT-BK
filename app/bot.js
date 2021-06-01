@@ -18,6 +18,7 @@ const { MongoDbStorage } = require("botbuilder-storage-mongodb");
 require("dotenv").config();
 
 let storage = null;
+console.log("Add storage " + process.env.MONGO_URI);
 if (process.env.MONGO_URI) {
     storage = mongoStorage = new MongoDbStorage({
         url: process.env.MONGO_URI,

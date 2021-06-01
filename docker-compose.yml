@@ -12,6 +12,7 @@ services:
       SERVICE_URL: "http://service:3000"
       GPT_URL: "http://gpt:5000"
       RASA_URL: "http://rasa:5005"
+      MONGO_URI: "${MONGO_URI}"
     ports:
       - 80:3000
     depends_on:

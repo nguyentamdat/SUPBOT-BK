@@ -100,7 +100,7 @@ module.exports = function (controller) {
   });
 
   const onMessage = async (bot, message) => {
-    debug("[onMessage]", message);
+    debug("[onMessage]", message.text);
     let { action, domain, intent, isQuestion, history } = message.nlu;
 
     // handle question first
