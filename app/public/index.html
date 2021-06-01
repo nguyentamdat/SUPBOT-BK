@@ -35,6 +35,9 @@
                             {{#if message.open_link}}
                               <a href="{{{message.open_link}}}" target="_blank" class="button_message">{{#if message.link_title}}{{message.link_title}}{{else}}{{message.open_link}}{{/if}}</a>
                             {{/if}}
+                            {{#if message.type != "message"}}
+                              <button>Edit</button>
+                            {{/if}}
                         </div>
                         {{#message.files}}
                           <div class="file_attachment">
