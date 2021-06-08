@@ -38,7 +38,7 @@ var Botkit = {
                 if (xmlhttp.readyState == XMLHttpRequest.DONE) {
                     if (xmlhttp.status == 200) {
                         var response = xmlhttp.responseText;
-                        if (response !='') {
+                        if (response != '') {
                             var message = null;
                             try {
                                 message = JSON.parse(response);
@@ -61,6 +61,24 @@ var Botkit = {
             xmlhttp.send(JSON.stringify(body));
         });
 
+    },
+    sendChange: function (id, text, e) {
+        this.deliverMessage({
+            type: "change",
+            new_msg: text,
+            msg_id: id,
+            user: this.guid,
+            channel: this.options.use_sockets ? 'websocket' : 'webhook'
+        });
+    },
+    sendVote: function (id, vote) {
+        this.deliverMessage({
+            type: "vote",
+            msg_id: id,
+            vote: vote,
+            user: this.guid,
+            channel: this.options.use_sockets ? 'websocket' : 'webhook'
+        });
     },
     send: function (text, e) {
         var that = this;
@@ -102,7 +120,7 @@ var Botkit = {
         if (!image) {
             return false;
         }
-        
+
         var message = {
             type: 'outgoing',
             image: image,
@@ -207,13 +225,7 @@ var Botkit = {
         that.socket = new WebSocket(ws_url);
 
         var connectEvent = 'hello';
-        if (Botkit.getCookie('botkit_guid')) {
-            that.guid = Botkit.getCookie('botkit_guid');
-            connectEvent = 'welcome_back';
-        } else {
-            that.guid = that.generate_guid();
-            Botkit.setCookie('botkit_guid', that.guid, 1);
-        }
+        that.guid = that.generate_guid();
 
         if (this.options.enable_history) {
             that.getHistory();
@@ -238,6 +250,12 @@ var Botkit = {
 
         that.socket.addEventListener('close', function (event) {
             console.log('SOCKET CLOSED!');
+            that.deliverMessage({
+                type: "disconnect",
+                user: that.guid,
+                channel: 'socket',
+                user_profile: that.current_user ? that.current_user : null,
+            });
             that.trigger('disconnected', event);
             if (that.reconnect_count < that.config.max_reconnect) {
                 setTimeout(function () {
@@ -396,7 +414,7 @@ var Botkit = {
         that.replies = document.getElementById('message_replies');
 
         that.input = document.getElementById('messenger_input');
-        
+
         that.focus();
 
         that.on('connected', function () {
@@ -532,3 +550,52 @@ var Botkit = {
     // the DOM will be available here
     Botkit.boot();
 })();
+
+Handlebars.registerHelper('ifCond', function (v1, v2, options) {
+    if (v1 === v2) {
+        return options.fn(this);
+    }
+    return options.inverse(this);
+});
+
+function editMsg(id) {
+    console.log("edit ", id);
+    let doc = document.getElementById("edit-" + id);
+    let btn = document.getElementById("btn-" + id);
+    doc.hidden = !doc.hidden;
+    btn.innerText = "Enter";
+    btn.onclick = () => submitChange(id);
+}
+
+function submitChange(id) {
+    let doc = document.getElementById("edit-" + id);
+    let btn = document.getElementById("btn-" + id);
+    let new_msg = doc.value;
+    console.log(new_msg);
+    doc.hidden = true;
+    btn.disabled = true;
+    Botkit.sendChange(id, new_msg, null);
+    let p = document.getElementById("message-0").children[0];
+    p.innerHTML = new_msg;
+    let btn2 = document.getElementById("btn-like-"+id);
+    btn2.disabled = true;
+    let btn1 = document.getElementById("btn-bore-"+id);
+    btn1.disabled = true;
+}
+
+function like(id) {
+    Botkit.sendVote(id, "like");
+    let btn = document.getElementById("btn-like-"+id);
+    btn.disabled = true;
+    let btn1 = document.getElementById("btn-bore-"+id);
+    btn1.disabled = true;
+}
+
+function bore(id) {
+    Botkit.sendVote(id, "bore");
+    let btn = document.getElementById("btn-bore-"+id);
+    btn.disabled = true;
+    let btn1 = document.getElementById("btn-like-"+id);
+    btn1.disabled = true;
+}
+

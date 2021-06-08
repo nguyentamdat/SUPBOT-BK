@@ -22,7 +22,7 @@
             <section>
                 <div id="message_list">
                     <div id="message_template">
-                        <div class="message {{message.type}}">
+                        <div class="message {{message.type}}" id="message-{{message.msg_id}}">
                             {{#if message.isTyping}}
                               <div class="typing-indicator">
                                 <span></span>
@@ -35,9 +35,12 @@
                             {{#if message.open_link}}
                               <a href="{{{message.open_link}}}" target="_blank" class="button_message">{{#if message.link_title}}{{message.link_title}}{{else}}{{message.open_link}}{{/if}}</a>
                             {{/if}}
-                            {{#if message.type != "message"}}
-                              <button>Edit</button>
-                            {{/if}}
+                            {{#ifCond message.type "message"}}
+                              <input type="text" id="edit-{{{message.msg_id}}}" hidden="true" />
+                              <button id="btn-{{{message.msg_id}}}" onclick="editMsg({{{message.msg_id}}})">Edit</button>
+                              <button id="btn-like-{{{message.msg_id}}}" onclick="like({{{message.msg_id}}})">Like</button>
+                              <button id="btn-bore-{{{message.msg_id}}}" onclick="bore({{{message.msg_id}}})">Bored</button>
+                            {{/ifCond}}
                         </div>
                         {{#message.files}}
                           <div class="file_attachment">

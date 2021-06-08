@@ -1,46 +1,13 @@
-var rasa = require("../middlewares/middlewares")({
+var rasa = require("../helper/middlewares")({
   rasa_uri: `${process.env.AI_URL}`,
 });
 const debug = require("debug")("botkit:domains");
 const { BotkitConversation } = require("botkit");
 const request = require("request-promise");
-const Response = require("../response/response");
+const { get_response } = require("../response/response");
+const users = require("../helper/UserHandler")();
 
-var UserState = {};
-
-const _THREAD_HOLD = 0.1;
-
-defaultUserState = (ref) => ({
-  subscriber: [],
-  ref: ref,
-});
-
-function createUserState(m) {
-  for (let u in UserState) {
-    if (m.user === u) {
-      return UserState[u];
-    }
-  }
-  return defaultUserState(m.reference);
-}
-
-function getUserState(m) {
-  for (let u in UserState) {
-    if (m === u) {
-      return UserState[u];
-    }
-  }
-  return null;
-}
-
-function isOnline(user) {
-  for (let u in UserState) {
-    if (u === user) {
-      return true;
-    }
-  }
-  return false;
-}
+const _THREAD_HOLD = 0.05;
 
 module.exports = function (controller) {
   controller.middleware.receive.use(rasa.receive);
@@ -58,49 +25,10 @@ module.exports = function (controller) {
     next();
   });
 
-  controller.middleware.ingest.use(async (bot, message, next) => {
-    let userState = createUserState(message);
-    for (let subscriber of userState.subscriber) {
-      let notifyBot = await controller.spawn();
-      await notifyBot.changeContext(subscriber);
-      await notifyBot.say(`User ${subscriber.user.id} said: ` + message.text);
-    }
-    next();
-  });
-
-  controller.interrupts("subscribe", "message", async (bot, message) => {
-    let userState = createUserState(message);
-    let subscribe = message.text.split(" ")[1];
-    if (subscribe != null) {
-      let subscribeState = getUserState(subscribe);
-      subscribeState.subscriber.push(userState.ref);
-    }
-    return await bot.reply(
-      message,
-      "Bạn đã lắng nghe người dùng: " + subscribe
-    );
-  });
-
-  controller.interrupts("list", "message", async (bot, message) => {
-    let user = message.user;
-    let reply = [];
-    console.log(UserState);
-    for (let u in UserState) {
-      if (u !== user) {
-        reply.push({
-          title: u,
-          payload: `subscribe ${u}`,
-        });
-      }
-    }
-    await bot.reply(message, {
-      text: "Server hiện có các user sau",
-      quick_replies: reply,
-    });
-  });
-
   const onMessage = async (bot, message) => {
     debug("[onMessage]", message.text);
+    let user = users.getUser(message.user);
+    user.addMsg(message.text);
     let { action, domain, intent, isQuestion, history } = message.nlu;
 
     // handle question first
@@ -113,59 +41,60 @@ module.exports = function (controller) {
         method: "post",
       };
       let res = await request(options);
-      return await bot.reply(message, res[1]);
+      let reply = user.getNewMsg(res[1]);
+      return await bot.reply(message, reply);
     }
 
-    // handle chat with client
-    if (
-      bot._config.domain !== undefined &&
-      bot._config.domain == "BanHangClassifier"
-    ) {
-      let reply = await request({
-        method: "post",
-        body: { text: message.text, type: "message" },
-        json: true,
-        uri: message._config.domain.url,
-      });
-      return await bot.reply(message, reply.text);
-    }
+    // // handle chat with client
+    // if (
+    //   bot._config.domain !== undefined &&
+    //   bot._config.domain == "BanHangClassifier"
+    // ) {
+    //   let reply = await request({
+    //     method: "post",
+    //     body: { text: message.text, type: "message" },
+    //     json: true,
+    //     uri: message._config.domain.url,
+    //   });
+    //   return await bot.reply(message, reply.text);
+    // }
 
     // handle normal chat
-    if (Response[message.intent]) {
-      let res = Response[message.intent];
-      let len = res.length;
-      return await bot.reply(message, res[Math.floor(Math.random() * len)]);
+    if (get_response(message.intent)) {
+      let reply = get_response(message.intent);
+      reply = user.getNewMsg(reply);
+      return await bot.reply(message, reply);
     }
 
-    // handle connect to client
-    if (action == "connect") {
-      let options = {
-        method: "POST",
-        uri: `${process.env.SERVICE_URL}`,
-        body: {
-          state: {
-            user_id: message.user,
-          },
-          domain: domain,
-        },
-        json: true,
-      };
-      let res = await request(options);
-      if (res.result.code == 0) {
-        let reply = await request({
-          method: "post",
-          body: { text: message.text, type: "message" },
-          json: true,
-          uri: res.result.url,
-        });
-        bot._config.domain = {
-          url: res.result.url,
-          domain: domain,
-        };
-        return await bot.reply(message, reply.text);
-      }
-      return await bot.reply(message, JSON.stringify(res.result));
-    }
+    // // handle connect to client
+    // if (action == "connect") {
+    //   let options = {
+    //     method: "POST",
+    //     uri: `${process.env.SERVICE_URL}`,
+    //     body: {
+    //       state: {
+    //         user_id: message.user,
+    //       },
+    //       domain: domain,
+    //     },
+    //     json: true,
+    //   };
+    //   let res = await request(options);
+    //   if (res.result.code == 0) {
+    //     let reply = await request({
+    //       method: "post",
+    //       body: { text: message.text, type: "message" },
+    //       json: true,
+    //       uri: res.result.url,
+    //     });
+    //     bot._config.domain = {
+    //       url: res.result.url,
+    //       domain: domain,
+    //     };
+    //     return await bot.reply(message, reply.text);
+    //   }
+    //   return await bot.reply(message, JSON.stringify(res.result));
+    // }
 
     // handle auto generate chat from gpt server
     if (action == "default") {
@@ -178,21 +107,35 @@ module.exports = function (controller) {
         json: true,
       };
       let res = await request(options);
+      let reply = res.text === "" ? "Tôi không thể hiểu bạn!" : res.text;
+      reply = user.getNewMsg(reply);
       return await bot.reply(
         message,
-        res.text === "" ? "Tôi không thể hiểu bạn!" : res.text
+        reply
       );
     }
   };
 
   const onWelcomeBack = async (bot, message) => {
-    debug("Welcome back");
-    UserState[message.user] = await createUserState(message);
-    await bot.reply(message, "Chào mừng bạn");
+    debug("[onWelcomeBack]");
+    if (users.getUser(message.user) == null) {
+      await onHello(bot, message);
+    }
+  };
+  const onHello = async (bot, message) => {
+    debug("[onHello]");
+    let user = users.newUser(message.user);
+    let msg = get_response("greet");
+    msg = user.getNewMsg(msg);
+    await bot.reply(message, msg);
+  };
+
+  const onDisconnect = async (bot, message) => {
+    debug("[onDisconnect]");
   };
 
   const onImage = async (bot, message) => {
-    debug("onImage");
+    debug("[onImage]");
     let base64 = message.image;
     if (base64) {
       let options = {
@@ -229,8 +172,23 @@ module.exports = function (controller) {
     }
   };
 
+  const onChangeMsg = (bot, message) => {
+    let user = users.getUser(message.user);
+    user.changeMsg(message.msg_id, message.new_msg);
+    debug("[onChangeMsg]", user);
+  };
+
+  const onVote = (bot, message) => {
+    let user = users.getUser(message.user);
+    debug("[onVote]", user);
+    user.vote(message.msg_id, message.vote);
+  }
+
   controller.on("welcome_back", onWelcomeBack);
-  controller.on("hello", onWelcomeBack);
+  controller.on("hello", onHello);
   controller.on("image", onImage);
   controller.on("message", onMessage);
+  controller.on("change", onChangeMsg);
+  controller.on("disconnect", onDisconnect);
+  controller.on("vote", onVote);
 };
