@@ -18,23 +18,23 @@ var Botkit = {
     reconnect_count: 0,
     guid: null,
     current_user: null,
-    on: function (event, handler) {
-        this.message_window.addEventListener(event, function (evt) {
+    on: function(event, handler) {
+        this.message_window.addEventListener(event, function(evt) {
             handler(evt.detail);
         });
     },
-    trigger: function (event, details) {
+    trigger: function(event, details) {
         var event = new CustomEvent(event, {
             detail: details
         });
         this.message_window.dispatchEvent(event);
     },
-    request: function (url, body) {
+    request: function(url, body) {
         var that = this;
-        return new Promise(function (resolve, reject) {
+        return new Promise(function(resolve, reject) {
             var xmlhttp = new XMLHttpRequest();
 
-            xmlhttp.onreadystatechange = function () {
+            xmlhttp.onreadystatechange = function() {
                 if (xmlhttp.readyState == XMLHttpRequest.DONE) {
                     if (xmlhttp.status == 200) {
                         var response = xmlhttp.responseText;
@@ -62,7 +62,7 @@ var Botkit = {
         });
 
     },
-    sendChange: function (id, text, e) {
+    sendChange: function(id, text, e) {
         this.deliverMessage({
             type: "change",
             new_msg: text,
@@ -71,7 +71,7 @@ var Botkit = {
             channel: this.options.use_sockets ? 'websocket' : 'webhook'
         });
     },
-    sendVote: function (id, vote) {
+    sendVote: function(id, vote) {
         this.deliverMessage({
             type: "vote",
             msg_id: id,
@@ -80,7 +80,7 @@ var Botkit = {
             channel: this.options.use_sockets ? 'websocket' : 'webhook'
         });
     },
-    send: function (text, e) {
+    send: function(text, e) {
         var that = this;
         if (e) {
             e.preventDefault();
@@ -111,7 +111,7 @@ var Botkit = {
 
         return false;
     },
-    sendImage: function (image, e) {
+    sendImage: function(image, e) {
         var that = this;
         if (e) {
             e.preventDefault();
@@ -140,43 +140,43 @@ var Botkit = {
 
         return false;
     },
-    deliverMessage: function (message) {
+    deliverMessage: function(message) {
         if (this.options.use_sockets) {
             this.socket.send(JSON.stringify(message));
         } else {
             this.webhook(message);
         }
     },
-    getHistory: function (guid) {
+    getHistory: function(guid) {
         var that = this;
         if (that.guid) {
             that.request('/botkit/history', {
 
                 user: that.guid
-            }).then(function (history) {
+            }).then(function(history) {
                 if (history.success) {
                     that.trigger('history_loaded', history.history);
                 } else {
                     that.trigger('history_error', new Error(history.error));
                 }
-            }).catch(function (err) {
+            }).catch(function(err) {
                 that.trigger('history_error', err);
             });
         }
     },
-    webhook: function (message) {
+    webhook: function(message) {
         var that = this;
 
-        that.request('/api/messages', message).then(function (messages) {
+        that.request('/api/messages', message).then(function(messages) {
             messages.forEach((message) => {
                 that.trigger(message.type, message);
             });
-        }).catch(function (err) {
+        }).catch(function(err) {
             that.trigger('webhook_error', err);
         });
 
     },
-    connect: function (user) {
+    connect: function(user) {
 
         var that = this;
 
@@ -196,7 +196,7 @@ var Botkit = {
         }
 
     },
-    connectWebhook: function () {
+    connectWebhook: function() {
         var that = this;
         if (Botkit.getCookie('botkit_guid')) {
             that.guid = Botkit.getCookie('botkit_guid');
@@ -219,7 +219,7 @@ var Botkit = {
         });
 
     },
-    connectWebsocket: function (ws_url) {
+    connectWebsocket: function(ws_url) {
         var that = this;
         // Create WebSocket connection.
         that.socket = new WebSocket(ws_url);
@@ -232,7 +232,7 @@ var Botkit = {
         }
 
         // Connection opened
-        that.socket.addEventListener('open', function (event) {
+        that.socket.addEventListener('open', function(event) {
             console.log('CONNECTED TO SOCKET');
             that.reconnect_count = 0;
             that.trigger('connected', event);
@@ -244,11 +244,11 @@ var Botkit = {
             });
         });
 
-        that.socket.addEventListener('error', function (event) {
+        that.socket.addEventListener('error', function(event) {
             console.error('ERROR', event);
         });
 
-        that.socket.addEventListener('close', function (event) {
+        that.socket.addEventListener('close', function(event) {
             console.log('SOCKET CLOSED!');
             that.deliverMessage({
                 type: "disconnect",
@@ -258,7 +258,7 @@ var Botkit = {
             });
             that.trigger('disconnected', event);
             if (that.reconnect_count < that.config.max_reconnect) {
-                setTimeout(function () {
+                setTimeout(function() {
                     console.log('RECONNECTING ATTEMPT ', ++that.reconnect_count);
                     that.connectWebsocket(that.config.ws_url);
                 }, that.config.reconnect_timeout);
@@ -268,7 +268,7 @@ var Botkit = {
         });
 
         // Listen for messages
-        that.socket.addEventListener('message', function (event) {
+        that.socket.addEventListener('message', function(event) {
             var message = null;
             try {
                 message = JSON.parse(event.data);
@@ -280,16 +280,16 @@ var Botkit = {
             that.trigger(message.type, message);
         });
     },
-    clearReplies: function () {
+    clearReplies: function() {
         this.replies.innerHTML = '';
     },
-    quickReply: function (payload) {
+    quickReply: function(payload) {
         this.send(payload);
     },
-    focus: function () {
+    focus: function() {
         this.input.focus();
     },
-    renderMessage: function (message) {
+    renderMessage: function(message) {
         var that = this;
         if (!that.next_line) {
             that.next_line = document.createElement('div');
@@ -311,10 +311,10 @@ var Botkit = {
             message: message
         });
         if (!message.isTyping) {
-            delete (that.next_line);
+            delete(that.next_line);
         }
     },
-    triggerScript: function (script, thread) {
+    triggerScript: function(script, thread) {
         this.deliverMessage({
             type: 'trigger',
             user: this.guid,
@@ -323,7 +323,7 @@ var Botkit = {
             thread: thread
         });
     },
-    identifyUser: function (user) {
+    identifyUser: function(user) {
 
         user.timezone_offset = new Date().getTimezoneOffset();
 
@@ -339,7 +339,7 @@ var Botkit = {
             user_profile: user,
         });
     },
-    receiveCommand: function (event) {
+    receiveCommand: function(event) {
         switch (event.data.name) {
             case 'trigger':
                 // tell Botkit to trigger a specific script/thread
@@ -360,20 +360,20 @@ var Botkit = {
                 console.log('UNKNOWN COMMAND', event.data);
         }
     },
-    sendEvent: function (event) {
+    sendEvent: function(event) {
 
         if (this.parent_window) {
             this.parent_window.postMessage(event, '*');
         }
 
     },
-    setCookie: function (cname, cvalue, exdays) {
+    setCookie: function(cname, cvalue, exdays) {
         var d = new Date();
         d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
         var expires = "expires=" + d.toUTCString();
         document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
     },
-    getCookie: function (cname) {
+    getCookie: function(cname) {
         var name = cname + "=";
         var decodedCookie = decodeURIComponent(document.cookie);
         var ca = decodedCookie.split(';');
@@ -388,7 +388,7 @@ var Botkit = {
         }
         return "";
     },
-    generate_guid: function () {
+    generate_guid: function() {
         function s4() {
             return Math.floor((1 + Math.random()) * 0x10000)
                 .toString(16)
@@ -397,7 +397,7 @@ var Botkit = {
         return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
             s4() + '-' + s4() + s4() + s4();
     },
-    boot: function (user) {
+    boot: function(user) {
 
         console.log('Booting up');
 
@@ -417,7 +417,7 @@ var Botkit = {
 
         that.focus();
 
-        that.on('connected', function () {
+        that.on('connected', function() {
             that.message_window.className = 'connected';
             that.input.disabled = false;
             that.sendEvent({
@@ -425,45 +425,45 @@ var Botkit = {
             });
         })
 
-        that.on('disconnected', function () {
+        that.on('disconnected', function() {
             that.message_window.className = 'disconnected';
             that.input.disabled = true;
         });
 
-        that.on('webhook_error', function (err) {
+        that.on('webhook_error', function(err) {
 
             alert('Error sending message!');
             console.error('Webhook Error', err);
 
         });
 
-        that.on('typing', function () {
+        that.on('typing', function() {
             that.clearReplies();
             that.renderMessage({
                 isTyping: true,
-                text: "typing..."
+                text: "thinking..."
             });
         });
 
-        that.on('sent', function () {
+        that.on('sent', function() {
             // do something after sending
         });
 
-        that.on('message', function (message) {
+        that.on('message', function(message) {
 
             console.log('RECEIVED MESSAGE', message);
             that.renderMessage(message);
 
         });
 
-        that.on('message', function (message) {
+        that.on('message', function(message) {
             if (message.goto_link) {
                 window.location = message.goto_link;
             }
         });
 
 
-        that.on('message', function (message) {
+        that.on('message', function(message) {
             that.clearReplies();
             if (message.quick_replies) {
 
@@ -471,14 +471,14 @@ var Botkit = {
 
                 var elements = [];
                 for (var r = 0; r < message.quick_replies.length; r++) {
-                    (function (reply) {
+                    (function(reply) {
 
                         var li = document.createElement('li');
                         var el = document.createElement('a');
                         el.innerHTML = reply.title;
                         el.href = '#';
 
-                        el.onclick = function () {
+                        el.onclick = function() {
                             that.quickReply(reply.payload);
                         }
 
@@ -509,7 +509,7 @@ var Botkit = {
             }
         });
 
-        that.on('history_loaded', function (history) {
+        that.on('history_loaded', function(history) {
             if (history) {
                 for (var m = 0; m < history.length; m++) {
                     that.renderMessage({
@@ -545,13 +545,13 @@ var Botkit = {
 };
 
 
-(function () {
+(function() {
     // your page initialization code here
     // the DOM will be available here
     Botkit.boot();
 })();
 
-Handlebars.registerHelper('ifCond', function (v1, v2, options) {
+Handlebars.registerHelper('ifCond', function(v1, v2, options) {
     if (v1 === v2) {
         return options.fn(this);
     }
@@ -577,25 +577,24 @@ function submitChange(id) {
     Botkit.sendChange(id, new_msg, null);
     let p = document.getElementById("message-0").children[0];
     p.innerHTML = new_msg;
-    let btn2 = document.getElementById("btn-like-"+id);
+    let btn2 = document.getElementById("btn-like-" + id);
     btn2.disabled = true;
-    let btn1 = document.getElementById("btn-bore-"+id);
+    let btn1 = document.getElementById("btn-bore-" + id);
     btn1.disabled = true;
 }
 
 function like(id) {
     Botkit.sendVote(id, "like");
-    let btn = document.getElementById("btn-like-"+id);
+    let btn = document.getElementById("btn-like-" + id);
     btn.disabled = true;
-    let btn1 = document.getElementById("btn-bore-"+id);
+    let btn1 = document.getElementById("btn-bore-" + id);
     btn1.disabled = true;
 }
 
 function bore(id) {
     Botkit.sendVote(id, "bore");
-    let btn = document.getElementById("btn-bore-"+id);
+    let btn = document.getElementById("btn-bore-" + id);
     btn.disabled = true;
-    let btn1 = document.getElementById("btn-like-"+id);
+    let btn1 = document.getElementById("btn-like-" + id);
     btn1.disabled = true;
 }
-

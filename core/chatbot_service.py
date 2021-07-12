@@ -32,7 +32,7 @@ class ChatbotService:
             __cls[domain] = globals()[domain]()
         self.__cls = __cls
         self.__states = {}
-        self.__qa = QAAgent()
+        # self.__qa = QAAgent()
         self.__doc = DeepOneClass()
 
     def score_domains(self, msg, threshold):
@@ -57,11 +57,11 @@ class ChatbotService:
 
         current_domain = state.get_domain()
 
-        pos_tagged = pos_tag(msg)
-        tags = [x[1] for x in pos_tagged]
-        words = [x[0] for x in pos_tagged]
-        isQuestion = any([x[0] == "ai" and x[1] == "P" for x in pos_tagged])
-        res["isQuestion"] = isQuestion
+        # pos_tagged = pos_tag(msg)
+        # tags = [x[1] for x in pos_tagged]
+        # words = [x[0] for x in pos_tagged]
+        # isQuestion = any([x[0] == "ai" and x[1] == "P" for x in pos_tagged])
+        # res["isQuestion"] = isQuestion
 
         # print("Before state", state)
         if current_domain == "default":
@@ -80,6 +80,10 @@ class ChatbotService:
         res["history"] = state.get_state()
 
         return res
+
+    def cls_msg(self, id, msg):
+        res = {"type": "general"}
+
 
     def add_bot_msg(self, id, msg):
         res = {"status": 0}
@@ -100,14 +104,14 @@ class ChatbotService:
 
         return res
 
-    def ask(self, question):
-        try:
-            result = self.__qa.get_answer(question)
-        except Exception as e:
-            print(e)
-            result = ["", "Câu hỏi này khó quá!!!", ""]
+    # def ask(self, question):
+    #     try:
+    #         result = self.__qa.get_answer(question)
+    #     except Exception as e:
+    #         print(e)
+    #         result = ["", "Câu hỏi này khó quá!!!", ""]
 
-        return result
+    #     return result
 
 
 if __name__ == "__main__":

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Level Chatbot</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.10/handlebars.min.js"></script>
+    <script src="https://cdn.rawgit.com/showdownjs/showdown/1.7.4/dist/showdown.min.js"></script>
+    <link rel="stylesheet" href="/css/chat.css">
+</head>
+
+<body>
+    <div class="center">
+        <div class="chat" id="message_window">
+            <div class="contact bar">
+                <div class="pic stark"></div>
+                <div class="name">
+                    Tony Stark
+                </div>
+                <div class="seen">
+                    Today at 12:56
+                </div>
+            </div>
+            <div class="messages" id="chat">
+                <div class="message parker">
+                    Hey, man! What's up, Mr Stark? 👋
+                </div>
+                <div class="message stark">
+                    Kid, where'd you come from?
+                </div>
+                <div class="message parker">
+                    Field trip! 🤣
+                </div>
+                <div class="message parker">
+                    Uh, what is this guy's problem, Mr. Stark? 🤔
+                </div>
+                <div class="message stark">
+                    Uh, he's from space, he came here to steal a necklace from a wizard.
+                </div>
+                <div class="message stark">
+                    <div class="typing typing-1"></div>
+                    <div class="typing typing-2"></div>
+                    <div class="typing typing-3"></div>
+                </div>
+            </div>
+            <div class="input">
+                <i class="fas fa-camera"></i><i class="far fa-laugh-beam"></i><input placeholder="Type your message here!" type="text" /><i class="fas fa-microphone"></i>
+            </div>
+        </div>
+    </div>
+    <script src="/client-new.js"></script>
+</body>
+
+</html>

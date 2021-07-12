@@ -11,17 +11,20 @@ ai = TextGenerator()
 
 class Text(BaseModel):
     text: List[str]
+    num: int
 
 
 @app.post("/generate")
 def generate(data: Text):
     data = data.dict()
-    text = data["text"][-3:]
+    print(data)
+    num = data["num"]
+    text = data["text"][-num:]
     idx = len(text)
-    print(data["text"][-3:])
+    # print(data["text"][-3:])
     text = "\n".join(text)
     reply = ai.generate_one(text, idx)
-    print(reply)
+    # print(reply)
     return {"text": reply}
 
 

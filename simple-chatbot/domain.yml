@@ -9,6 +9,7 @@ intents:
   - ask_location
   - ask_gender
   - ask_weather
+  - ask_person
 
 session_config:
   session_expiration_time: 60

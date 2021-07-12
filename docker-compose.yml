@@ -8,36 +8,39 @@ services:
       dockerfile: ./Dockerfile
     environment:
       NODE_ENV: production
-      AI_URL: "http://core:5000"
-      SERVICE_URL: "http://service:3000"
+      # AI_URL: "http://core:5000"
+      # SERVICE_URL: "http://service:3000"
       GPT_URL: "http://gpt:5000"
       RASA_URL: "http://rasa:5005"
+      QA_URL: "http://qa:5000"
       MONGO_URI: "${MONGO_URI}"
     ports:
       - 80:3000
     depends_on:
-      - core
-      - service
+      # - core
+      # - service
       - gpt
+      - rasa
+      - qa
   
-  core:
-    image: core
-    build:
-      context: ./core
-      dockerfile: ./Dockerfile
-    ports:
-      - 5000:5000
-    restart: always
+  # core:
+  #   image: core
+  #   build:
+  #     context: ./core
+  #     dockerfile: ./Dockerfile
+  #   ports:
+  #     - 5000:5000
+  #   restart: always
 
-  service:
-    image: service
-    build:
-      context: ./service
-      dockerfile: ./Dockerfile
-    environment:
-      NODE_ENV: production
-    ports:
-      - 3001:3000
+  # service:
+  #   image: service
+  #   build:
+  #     context: ./service
+  #     dockerfile: ./Dockerfile
+  #   environment:
+  #     NODE_ENV: production
+  #   ports:
+  #     - 3001:3000
 
   gpt:
     image: gpt
@@ -55,4 +58,13 @@ services:
     build:
       context: ./simple-chatbot
       dockerfile: ./Dockerfile
+    restart: always
+
+  qa:
+    image: qa
+    build:
+      context: ./qa
+      dockerfile: ./Dockerfile
+    ports: 
+      - 3003:5000
     restart: always

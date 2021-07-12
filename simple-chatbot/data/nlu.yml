@@ -56,9 +56,10 @@ nlu:
 
 - intent: ask_love
   examples: |
-    - có người yêu chưa?
-    - có ai yêu cậu không?
-    - bạn có thích ai không?
+    - có người yêu chưa
+    - có ai yêu không
+    - có thích ai không
+    - có bồ chưa
   
 - intent: ask_location
   examples: |
@@ -75,3 +76,32 @@ nlu:
   examples: |
     - thời tiết hôm nay thế nào?
     - trời hôm nay thế nào?
+    - hôm nay trời nóng hả?
+    - hôm nay có mưa không?
+    - ngày mai thời tiết thế nào?
+
+- intent: ask_person
+  examples: |
+    - ai là người đầu tiên lên mặt trăng?
+    - ai là tỷ phú thế giới?
+    - người nào sáng lập ra Microsoft?
+    - ai tạo ra máy tính?
+    - ai phát mình ra tên lửa?
+    - kem do ai làm ra?
+    - cha đẻ của Machine Learning là ai?
+    - người nào tạo ra Google?
+    - hoa hậu hoàn vũ là ai?
+    - hiệu trưởng trường bách khoa là ai?
+    - ai làm ra máy hơi nước?
+    - bóng đèn do ai phát minh?
+
+- regex: ask_person
+  examples: |
+    - \bai là\b
+    - \bngười nào\b
+    - \bai làm\b
+    - \bai tạo ra\b
+    - \blà ai\b
+    - \bngười tạo ra\b
+    - \bdo ai\b
+    - \bvì ai\b

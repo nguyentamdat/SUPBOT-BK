@@ -19,7 +19,7 @@ pipeline:
     constrain_similarities: true
     model_confidence: "linear_norm"
   - name: FallbackClassifier
-    threshold: 0.99
+    threshold: 0.6
     ambiguity_threshold: 0.1
 
 
