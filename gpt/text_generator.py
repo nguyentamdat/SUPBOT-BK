@@ -2,7 +2,7 @@ from aitextgen import aitextgen
 import os
 import logging
 
-MODEL_PATH = "202107112355new2"
+MODEL_PATH = "202107112355final"
 TOKENIZER_PATH = MODEL_PATH + "/aitextgen.tokenizer.json"
 VOCAB_FILE = MODEL_PATH + "/aitextgen-vocab.json"
 MERGES_FILE = MODEL_PATH + "/aitextgen-merges.txt"
