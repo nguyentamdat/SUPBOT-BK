@@ -68,3 +68,5 @@ services:
     ports: 
       - 3003:5000
     restart: always
+    environment:
+      API_KEY: $API_KEY
