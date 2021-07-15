@@ -9,29 +9,16 @@ nlu:
     - chào
     - xin chào
     - chào bạn
-    - alo
-    - alo alo
     - này
     - ê
-    - chào buổi sáng
-    - chào buổi trưa
-    - chào buổi tối
 
 - intent: goodbye
   examples: |
-    - good afternoon
     - chào tạm biệt
-    - good bye
-    - cee you later
-    - good night
     - bye
     - goodbye
-    - have a nice day
-    - see you around
     - bye bye
-    - see you later
     - tạm biệt
-    - đi nhé
     - hẹn gặp lại
     - gặp lại sau
     - bái bai
