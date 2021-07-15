@@ -9,91 +9,110 @@ nlu:
     - chào
     - xin chào
     - chào bạn
-    - alo
-    - alo alo
-    - này
-    - ê
+    # - này
+    # - ê
     - chào buổi sáng
     - chào buổi trưa
     - chào buổi tối
 
 - intent: goodbye
   examples: |
-    - good afternoon
-    - chào tạm biệt
-    - good bye
-    - cee you later
-    - good night
-    - bye
-    - goodbye
-    - have a nice day
-    - see you around
+    # - good afternoon
+    # - chào tạm biệt
+    # - good bye
+    # - cee you later
+    # - good night
+    # - bye
+    # - goodbye
+    # - have a nice day
+    # - see you around
     - bye bye
-    - see you later
+    # - see you later
     - tạm biệt
-    - đi nhé
+    # - đi nhé
     - hẹn gặp lại
     - gặp lại sau
     - bái bai
 
 - intent: ask_name
   examples: |
-    - bạn tên gì?
-    - tên bạn là gì?
-    - tên gì?
-    - cậu tên gì?
-    - gọi cậu là gì?
-    - gọi bạn là gì?
-    - tên của bạn là gì?
+    # - bạn tên gì?
+    # - tên bạn là gì?
+    # - tên gì?
+    # - cậu tên gì?
+    # - gọi cậu là gì?
+    # - gọi bạn là gì?
+    # - tên của bạn là gì?
+    - bạn tên gì
+    - cậu tên gì
+    - m tên gì
 
 - intent: ask_age
   examples: |
-    - bạn bao nhiêu tuổi?
-    - cậu bao nhiêu tuổi?
-    - bạn tuổi gì?
-    - bao nhiêu tuổi?
-    - sinh năm bao nhiêu?
+    # - bạn bao nhiêu tuổi?
+    # - cậu bao nhiêu tuổi?
+    # - bạn tuổi gì?
+    # - bao nhiêu tuổi?
+    # - sinh năm bao nhiêu?
+    - tuổi
+    - sinh năm
 
 - intent: ask_love
   examples: |
-    - có người yêu chưa
-    - có ai yêu không
-    - có thích ai không
-    - có bồ chưa
+    # - có người yêu chưa
+    # - có ai yêu không
+    # - có thích ai không
+    # - có bồ chưa
+    - người yêu
+    - bồ
   
 - intent: ask_location
   examples: |
-    - sống ở đâu?
-    - bạn sống ở đâu?
+    # - sống ở đâu?
+    # - bạn sống ở đâu?
+    - ở đâu
+    - nơi nào
 
 - intent: ask_gender
   examples: |
-    - bạn là nam hay nữ?
-    - giới tính của bạn là gì?
-    - cậu là con trai hay con gái
+    # - bạn là nam hay nữ?
+    # - giới tính của bạn là gì?
+    # - cậu là con trai hay con gái
+    - giới tính
+    - nam hay nữ
 
 - intent: ask_weather
   examples: |
-    - thời tiết hôm nay thế nào?
-    - trời hôm nay thế nào?
-    - hôm nay trời nóng hả?
-    - hôm nay có mưa không?
-    - ngày mai thời tiết thế nào?
+    # - thời tiết hôm nay thế nào?
+    # - trời hôm nay thế nào?
+    # - hôm nay trời nóng hả?
+    # - hôm nay có mưa không?
+    # - ngày mai thời tiết thế nào?
+    - thời tiết thế nào
+    - trời thế nào
 
+# - intent: ask_person
+#   examples: |
+#     - ai là người đầu tiên lên mặt trăng?
+#     - ai là tỷ phú thế giới?
+#     - người nào sáng lập ra Microsoft?
+#     - ai tạo ra máy tính?
+#     - ai phát mình ra tên lửa?
+#     - kem do ai làm ra?
+#     - cha đẻ của Machine Learning là ai?
+#     - người nào tạo ra Google?
+#     - hoa hậu hoàn vũ là ai?
+#     - hiệu trưởng trường bách khoa là ai?
+#     - ai làm ra máy hơi nước?
+#     - bóng đèn do ai phát minh?
 - intent: ask_person
   examples: |
-    - ai là người đầu tiên lên mặt trăng?
-    - ai là tỷ phú thế giới?
-    - người nào sáng lập ra Microsoft?
-    - ai tạo ra máy tính?
-    - ai phát mình ra tên lửa?
-    - kem do ai làm ra?
-    - cha đẻ của Machine Learning là ai?
-    - người nào tạo ra Google?
-    - hoa hậu hoàn vũ là ai?
-    - hiệu trưởng trường bách khoa là ai?
-    - ai làm ra máy hơi nước?
-    - bóng đèn do ai phát minh?
+      - ai là
+      - ai làm
+      - là ai
+      - ai tạo ra
+      - ai phát minh
+      - người nào
 
 - regex: ask_person
   examples: |

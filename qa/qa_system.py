@@ -14,7 +14,7 @@ class _QAAgent:
 
         passages = rel_ranking(question, documents)
 
-        passages = passages[:40]
+        passages = passages[:20]
 
         answers = self.reader.getPredictions(question, passages)
 
