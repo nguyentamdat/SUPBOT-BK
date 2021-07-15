@@ -44,11 +44,18 @@ module.exports = function(controller) {
                 },
                 method: "post",
             };
-            let res = await request(options);
-            let reply = res.answer != null ? res.answer[1] : "";
-            reply = reply != "" ? `Mình đoán đó chính là ${reply}` : "Ôi tiếc quá mình không biết người này :( Bạn hỏi về người khác đi!";
-            reply = user.getNewMsg(reply);
-            return await bot.reply(message, reply);
+            try {
+
+                let res = await request(options);
+                let reply = res.answer != null ? res.answer[1] : "";
+                reply = reply != "" ? `Mình đoán đó chính là ${reply}` : "Ôi tiếc quá mình không biết người này :( Bạn hỏi về người khác đi!";
+                reply = user.getNewMsg(reply);
+                return await bot.reply(message, reply);
+            }
+            catch
+            {
+                await bot.reply(message, ":(")
+            }
         }
 
         // // handle chat with client

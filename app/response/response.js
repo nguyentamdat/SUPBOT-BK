@@ -9,7 +9,7 @@ var response = {
     ],
     ask_love: [
         "bồ bịch gì tầm này",
-        "đẹp trai thì mới có nhiều đứa yêu",
+        "đẹp thì mới có nhiều đứa yêu",
     ],
     ask_location: [
         "xa tận chân trời, gần ngay trước mắt",
