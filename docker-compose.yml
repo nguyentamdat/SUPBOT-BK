@@ -15,7 +15,7 @@ services:
       QA_URL: "http://qa:5000"
       MONGO_URI: "${MONGO_URI}"
     ports:
-      - 80:3000
+      - 8989:3000
     depends_on:
       # - core
       # - service

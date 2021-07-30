@@ -1,7 +1,7 @@
 var response = {
-    greet: ["xin chào bạn", "chào bạn", "hế nhô"],
+    greet: ["xin chào bạn, hôm nay bạn có gì vui không?", "chào bạn, ngày hôm nay tuyệt nhỉ", "hế nhô, bạn ổn chứ?"],
     goodbye: ["tạm biệt nha", "bye bye"],
-    ask_name: ["tui tên là KiBot"],
+    ask_name: ["tui tên là KiBot, còn bạn tên gì?"],
     ask_age: [
         "mình mới có 1 tuổi à",
         "tuổi tác không quan trọng",

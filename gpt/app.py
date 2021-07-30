@@ -17,7 +17,7 @@ class Text(BaseModel):
 @app.post("/generate")
 def generate(data: Text):
     data = data.dict()
-    print(data)
+    # print(data)
     num = data["num"]
     text = data["text"][-num:]
     idx = len(text)

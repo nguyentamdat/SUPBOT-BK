@@ -21,10 +21,10 @@ class _TextGenerator:
 
     def generate_one(self, text, idx):
         try:
-            print(text)
+            # print(text)
             res = self.ai.generate_one(
-                prompt=text + "\n", temperature=0.9, top_p=0.7)
-            print(res)
+                prompt=text + "\n", temperature=1.0, top_p=0.8)
+            # print(res)
             return res.split("\n")[idx].strip(" -\n")
         except BaseException:
             logging.exception("Generate error")
